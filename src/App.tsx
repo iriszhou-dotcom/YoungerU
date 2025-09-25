@@ -10,7 +10,11 @@ import {
   ArrowLeft,
   Star,
   Shield,
-  Clock
+  Clock,
+  ChevronDown,
+  X,
+  Download,
+  Menu
 } from 'lucide-react';
 
 type Screen = 'landing' | 'welcome' | 'quiz-basics' | 'quiz-lifestyle' | 'quiz-diet' | 'quiz-goals' | 'results' | 'email';
@@ -23,6 +27,15 @@ interface QuizData {
   goals: string[];
 }
 
+interface FormData {
+  email: string;
+  firstName: string;
+}
+
+interface FormErrors {
+  email?: string;
+}
+
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('landing');
   const [quizData, setQuizData] = useState<QuizData>({
@@ -32,7 +45,55 @@ function App() {
     diet: '',
     goals: []
   });
-  const [email, setEmail] = useState('');
+  
+  const [inlineFormData, setInlineFormData] = useState<FormData>({ email: '', firstName: '' });
+  const [footerFormData, setFooterFormData] = useState<FormData>({ email: '', firstName: '' });
+  const [inlineFormErrors, setInlineFormErrors] = useState<FormErrors>({});
+  const [footerFormErrors, setFooterFormErrors] = useState<FormErrors>({});
+  const [inlineFormSuccess, setInlineFormSuccess] = useState(false);
+  const [footerFormSuccess, setFooterFormSuccess] = useState(false);
+  const [showGuideModal, setShowGuideModal] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const validateEmail = (email: string): string | undefined => {
+    if (!email) return 'Email is required';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Please enter a valid email';
+    return undefined;
+  };
+
+  const handleFormSubmit = (
+    formData: FormData,
+    setFormData: React.Dispatch<React.SetStateAction<FormData>>,
+    setFormErrors: React.Dispatch<React.SetStateAction<FormErrors>>,
+    setFormSuccess: React.Dispatch<React.SetStateAction<boolean>>,
+    trackingId: string
+  ) => {
+    const emailError = validateEmail(formData.email);
+    
+    if (emailError) {
+      setFormErrors({ email: emailError });
+      return;
+    }
+
+    setFormErrors({});
+    setFormSuccess(true);
+    setShowGuideModal(true);
+    
+    // Reset form after success
+    setTimeout(() => {
+      setFormData({ email: '', firstName: '' });
+      setFormSuccess(false);
+    }, 3000);
+  };
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
 
   const updateQuizData = (field: keyof QuizData, value: any) => {
     setQuizData(prev => ({ ...prev, [field]: value }));
@@ -44,8 +105,148 @@ function App() {
     return currentIndex >= 0 ? ((currentIndex + 1) / screens.length) * 100 : 0;
   };
 
+  const faqItems = [
+    {
+      question: "Is this medical advice?",
+      answer: "No. YoungerU provides educational, science-based guidance. Always talk to your clinician if you're pregnant, nursing, have a condition, or take medications."
+    },
+    {
+      question: "How long does it take to see results?",
+      answer: "Some people notice changes in 2–4 weeks with consistent use. We recommend starting one supplement at a time and tracking how you feel."
+    },
+    {
+      question: "Do you sell supplements?",
+      answer: "Not today. We focus on clarity and recommendations. We may add a curated marketplace later."
+    },
+    {
+      question: "What does the quiz ask?",
+      answer: "Basics like age range, lifestyle, diet, and goals (energy, focus, recovery). It takes about 2–3 minutes."
+    },
+    {
+      question: "Is my data private?",
+      answer: "Yes. We collect only what's needed to create your plan and you can request deletion anytime. See our Privacy Policy."
+    }
+  ];
+
+  const renderNavigation = () => (
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <div className="w-8 h-8 bg-[#7ED957] rounded-full flex items-center justify-center mr-3">
+              <Zap className="w-5 h-5 text-[#174C4F]" />
+            </div>
+            <span className="text-xl font-bold text-[#174C4F]">YoungerU</span>
+          </div>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            <button onClick={() => scrollToSection('solution')} className="text-gray-600 hover:text-[#174C4F] transition-colors">
+              Solution
+            </button>
+            <button onClick={() => scrollToSection('pricing')} className="text-gray-600 hover:text-[#174C4F] transition-colors">
+              Pricing
+            </button>
+            <button onClick={() => scrollToSection('progress-stories')} className="text-gray-600 hover:text-[#174C4F] transition-colors">
+              Stories
+            </button>
+            <button onClick={() => scrollToSection('faq')} className="text-gray-600 hover:text-[#174C4F] transition-colors">
+              FAQ
+            </button>
+            <button 
+              onClick={() => scrollToSection('waitlist-inline')} 
+              className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-4 py-2 rounded-full transition-colors"
+            >
+              Join
+            </button>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2"
+          >
+            <Menu className="w-6 h-6 text-[#174C4F]" />
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="flex flex-col space-y-4">
+              <button onClick={() => scrollToSection('solution')} className="text-left text-gray-600 hover:text-[#174C4F] transition-colors">
+                Solution
+              </button>
+              <button onClick={() => scrollToSection('pricing')} className="text-left text-gray-600 hover:text-[#174C4F] transition-colors">
+                Pricing
+              </button>
+              <button onClick={() => scrollToSection('progress-stories')} className="text-left text-gray-600 hover:text-[#174C4F] transition-colors">
+                Stories
+              </button>
+              <button onClick={() => scrollToSection('faq')} className="text-left text-gray-600 hover:text-[#174C4F] transition-colors">
+                FAQ
+              </button>
+              <button 
+                onClick={() => scrollToSection('waitlist-inline')} 
+                className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-4 py-2 rounded-full transition-colors text-center"
+              >
+                Join
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+
+  const renderGuideModal = () => {
+    if (!showGuideModal) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-[#174C4F]">Your Supplement Clarity Guide</h3>
+            <button 
+              onClick={() => setShowGuideModal(false)}
+              className="p-2 hover:bg-gray-100 rounded-full"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          
+          <div className="bg-gray-50 p-6 rounded-lg mb-6">
+            <h4 className="text-xl font-semibold mb-4 text-[#174C4F]">What to Try First</h4>
+            <div className="space-y-3 text-gray-700">
+              <p><strong>Start Simple:</strong> Begin with one supplement at a time to track how you feel.</p>
+              <p><strong>Foundation First:</strong> Consider Vitamin D3, Omega-3, and a quality multivitamin as your base.</p>
+              <p><strong>Track Progress:</strong> Keep a simple journal of energy, sleep, and mood for 2-4 weeks.</p>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-6 rounded-lg mb-6">
+            <h4 className="text-xl font-semibold mb-4 text-[#174C4F]">Timing & Safety Basics</h4>
+            <div className="space-y-3 text-gray-700">
+              <p><strong>With Food:</strong> Most supplements absorb better with meals, especially fat-soluble vitamins.</p>
+              <p><strong>Morning vs Evening:</strong> Energy supplements in AM, calming ones like magnesium in PM.</p>
+              <p><strong>Check Interactions:</strong> Always consult your healthcare provider about medication interactions.</p>
+            </div>
+          </div>
+
+          <button className="w-full bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-6 py-3 rounded-lg transition-colors inline-flex items-center justify-center gap-2">
+            <Download className="w-5 h-5" />
+            Download Full PDF Guide
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   const renderLandingPage = () => (
     <div className="min-h-screen bg-white">
+      {renderNavigation()}
+      {renderGuideModal()}
+
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-[#174C4F] to-[#2a7073] text-white">
         <div className="absolute inset-0 bg-black/20"></div>
@@ -70,7 +271,7 @@ function App() {
             </p>
             <button 
               onClick={() => setCurrentScreen('welcome')}
-              className="bg-[#7ED957] hover:bg-[#6BC444] text-[#174C4F] font-semibold px-8 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+              className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
             >
               Start Your Plan
               <ArrowRight className="w-5 h-5" />
@@ -80,7 +281,7 @@ function App() {
       </div>
 
       {/* Problem Section */}
-      <div className="py-20 bg-gray-50">
+      <div className="py-20 bg-[#F5F7F8]">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="bg-white p-8 lg:p-12 rounded-2xl shadow-lg">
             <blockquote className="text-2xl lg:text-3xl text-gray-800 italic leading-relaxed">
@@ -95,7 +296,7 @@ function App() {
       </div>
 
       {/* Solution Section */}
-      <div className="py-20">
+      <div id="solution" className="py-20">
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-[#174C4F]">
             Clarity, not confusion.
@@ -124,8 +325,8 @@ function App() {
           </div>
           <div className="text-center mt-12">
             <button 
-              onClick={() => setCurrentScreen('welcome')}
-              className="bg-[#7ED957] hover:bg-[#6BC444] text-[#174C4F] font-semibold px-8 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+              onClick={() => scrollToSection('waitlist-inline')}
+              className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-8 py-4 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
             >
               Join the Waitlist
               <ArrowRight className="w-5 h-5" />
@@ -134,10 +335,69 @@ function App() {
         </div>
       </div>
 
+      {/* Inline Email Capture / Waitlist */}
+      <div id="waitlist-inline" className="py-20 bg-[#174C4F] text-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+            Get your free Supplement Clarity Guide
+          </h2>
+          <p className="text-xl mb-12 opacity-90 leading-relaxed max-w-3xl mx-auto">
+            Join the waitlist and we'll send a 2-page starter guide: what to try first, how to time supplements, and safety basics.
+          </p>
+          
+          {inlineFormSuccess ? (
+            <div className="bg-[#7ED957]/20 border border-[#7ED957] rounded-lg p-6 max-w-md mx-auto">
+              <p className="text-lg">🎉 Check your inbox! Your guide is on the way. You're on the YoungerU waitlist.</p>
+            </div>
+          ) : (
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleFormSubmit(inlineFormData, setInlineFormData, setInlineFormErrors, setInlineFormSuccess, 'waitlist-inline-submit');
+              }}
+              className="max-w-md mx-auto space-y-4"
+            >
+              <div>
+                <input
+                  type="text"
+                  placeholder="First name (optional)"
+                  value={inlineFormData.firstName}
+                  onChange={(e) => setInlineFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7ED957]"
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={inlineFormData.email}
+                  onChange={(e) => setInlineFormData(prev => ({ ...prev, email: e.target.value }))}
+                  className={`w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 ${
+                    inlineFormErrors.email ? 'ring-2 ring-red-500' : 'focus:ring-[#7ED957]'
+                  }`}
+                />
+                {inlineFormErrors.email && (
+                  <p className="text-red-300 text-sm mt-1 text-left">{inlineFormErrors.email}</p>
+                )}
+              </div>
+              <button 
+                type="submit"
+                data-track="waitlist-inline-submit"
+                className="w-full bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
+              >
+                Send My Free Guide
+              </button>
+            </form>
+          )}
+          
+          <p className="text-sm opacity-70 mt-4">No spam. Unsubscribe anytime.</p>
+        </div>
+      </div>
+
       {/* Benefits Section */}
-      <div className="py-20 bg-[#174C4F] text-white">
+      <div className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-[#174C4F]">
             Targeted benefits for your goals
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -150,8 +410,8 @@ function App() {
                 <div className="w-16 h-16 bg-[#7ED957] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                   <benefit.icon className="w-8 h-8 text-[#174C4F]" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">{benefit.title}</h3>
-                <p className="text-gray-300 text-lg leading-relaxed">{benefit.desc}</p>
+                <h3 className="text-2xl font-bold mb-4 text-[#174C4F]">{benefit.title}</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">{benefit.desc}</p>
               </div>
             ))}
           </div>
@@ -159,7 +419,7 @@ function App() {
       </div>
 
       {/* Trust Section */}
-      <div className="py-20 bg-white">
+      <div className="py-20 bg-[#F5F7F8]">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-[#174C4F]">
@@ -178,7 +438,7 @@ function App() {
               { name: 'Mike R.', age: '48', quote: 'My energy levels are back to where they were 10 years ago.' },
               { name: 'Lisa K.', age: '39', quote: 'No more guessing what supplements I actually need.' }
             ].map((testimonial, index) => (
-              <div key={index} className="bg-gray-50 p-6 rounded-xl">
+              <div key={index} className="bg-white p-6 rounded-xl shadow-sm">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center mr-4">
                     <span className="text-[#174C4F] font-bold">{testimonial.name[0]}</span>
@@ -211,26 +471,185 @@ function App() {
         </div>
       </div>
 
+      {/* Pricing / Future Plan Section */}
+      <div id="pricing" className="py-20 bg-[#174C4F] text-white">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16">
+            What's next
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-white/10 p-8 rounded-2xl">
+              <h3 className="text-2xl font-bold mb-4">Basic (Free)</h3>
+              <p className="text-lg opacity-90 leading-relaxed">
+                Quick quiz + personalized supplement categories, evidence snapshots, and safety notes.
+              </p>
+            </div>
+            <div className="bg-white/10 p-8 rounded-2xl relative">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-[#7ED957] text-[#174C4F] px-4 py-1 rounded-full text-sm font-semibold">
+                  Coming Soon
+                </span>
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Premium</h3>
+              <p className="text-lg opacity-90 leading-relaxed mb-6">
+                Weekly check-ins, progress insights, and deeper personalization. Advanced guidance without the guesswork.
+              </p>
+              <button 
+                onClick={() => scrollToSection('waitlist-inline')}
+                className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
+              >
+                Join the Waitlist
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Progress Stories Section */}
+      <div id="progress-stories" className="py-20 bg-[#F5F7F8]">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-[#174C4F]">
+              Progress, not guesswork
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Early users are finding clarity and feeling better with a simple, personalized plan.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { 
+                name: 'Alex, 41', 
+                quote: 'My afternoon energy slump is getting shorter.',
+                week: 'Week 3',
+                image: 'https://images.pexels.com/photos/3768911/pexels-photo-3768911.jpeg?auto=compress&cs=tinysrgb&w=400'
+              },
+              { 
+                name: 'Priya, 39', 
+                quote: 'I\'m sleeping deeper and waking up clearer.',
+                week: 'Week 4',
+                image: 'https://images.pexels.com/photos/3768997/pexels-photo-3768997.jpeg?auto=compress&cs=tinysrgb&w=400'
+              },
+              { 
+                name: 'Dan, 45', 
+                quote: 'Recovery after workouts isn\'t crushing me anymore.',
+                week: 'Week 5',
+                image: 'https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg?auto=compress&cs=tinysrgb&w=400'
+              }
+            ].map((story, index) => (
+              <div key={index} className="bg-white p-6 rounded-xl shadow-sm">
+                <div 
+                  className="w-full h-48 bg-cover bg-center rounded-lg mb-4"
+                  style={{ backgroundImage: `url(${story.image})` }}
+                  role="img"
+                  aria-label={`Photo of ${story.name}`}
+                ></div>
+                <div className="text-sm text-[#7ED957] font-semibold mb-2">{story.week}</div>
+                <blockquote className="text-lg text-gray-800 italic mb-3">
+                  "{story.quote}"
+                </blockquote>
+                <p className="text-gray-600 font-medium">— {story.name}</p>
+                <p className="text-xs text-gray-500 mt-3">
+                  Results vary. Educational, not medical advice.
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div id="faq" className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16 text-[#174C4F]">
+            FAQ
+          </h2>
+          <div className="space-y-4">
+            {faqItems.map((item, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg">
+                <button
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:ring-inset"
+                  aria-expanded={openFaqIndex === index}
+                  aria-controls={`faq-answer-${index}`}
+                >
+                  <span className="text-lg font-semibold text-[#174C4F]">{item.question}</span>
+                  <ChevronDown 
+                    className={`w-5 h-5 text-gray-500 transition-transform ${
+                      openFaqIndex === index ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+                {openFaqIndex === index && (
+                  <div 
+                    id={`faq-answer-${index}`}
+                    className="px-6 pb-4"
+                    role="region"
+                    aria-labelledby={`faq-question-${index}`}
+                  >
+                    <p className="text-gray-700 leading-relaxed">{item.answer}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Footer */}
       <div className="py-16 bg-gray-900 text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold mb-4">Feel younger, live stronger.</h3>
+          <h3 className="text-3xl font-bold mb-4">Ready to feel younger?</h3>
           <p className="text-gray-300 mb-8 text-lg">
-            Be the first to know when we launch and get early access to personalized supplement guidance.
+            Join the waitlist and get the Supplement Clarity Guide.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7ED957]"
-            />
-            <button className="bg-[#7ED957] hover:bg-[#6BC444] text-[#174C4F] font-semibold px-6 py-3 rounded-lg transition-colors duration-300 inline-flex items-center justify-center gap-2">
-              <Mail className="w-5 h-5" />
-              Join the Waitlist
-            </button>
-          </div>
+          
+          {footerFormSuccess ? (
+            <div className="bg-[#7ED957]/20 border border-[#7ED957] rounded-lg p-6 max-w-md mx-auto">
+              <p className="text-lg">🎉 Check your inbox! Your guide is on the way. You're on the YoungerU waitlist.</p>
+            </div>
+          ) : (
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleFormSubmit(footerFormData, setFooterFormData, setFooterFormErrors, setFooterFormSuccess, 'waitlist-footer-submit');
+              }}
+              className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto"
+            >
+              <div className="flex-1">
+                <input
+                  type="text"
+                  placeholder="First name (optional)"
+                  value={footerFormData.firstName}
+                  onChange={(e) => setFooterFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7ED957] mb-2 sm:mb-0"
+                />
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={footerFormData.email}
+                  onChange={(e) => setFooterFormData(prev => ({ ...prev, email: e.target.value }))}
+                  className={`w-full px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 ${
+                    footerFormErrors.email ? 'ring-2 ring-red-500' : 'focus:ring-[#7ED957]'
+                  }`}
+                />
+                {footerFormErrors.email && (
+                  <p className="text-red-300 text-sm mt-1 text-left">{footerFormErrors.email}</p>
+                )}
+              </div>
+              <button 
+                type="submit"
+                data-track="waitlist-footer-submit"
+                className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-300 inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
+              >
+                <Mail className="w-5 h-5" />
+                Join & Get the Guide
+              </button>
+            </form>
+          )}
+          
+          <p className="text-sm text-gray-400 mt-4">No spam. Unsubscribe anytime.</p>
         </div>
       </div>
     </div>
@@ -250,7 +669,7 @@ function App() {
         </p>
         <button 
           onClick={() => setCurrentScreen('quiz-basics')}
-          className="bg-[#7ED957] hover:bg-[#6BC444] text-[#174C4F] font-semibold px-8 py-4 rounded-full text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+          className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-8 py-4 rounded-full text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
         >
           Start Quiz
           <ArrowRight className="w-6 h-6" />
@@ -278,7 +697,7 @@ function App() {
                   <button
                     key={age}
                     onClick={() => updateQuizData('age', age)}
-                    className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+                    className={`p-4 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7ED957] ${
                       quizData.age === age 
                         ? 'border-[#7ED957] bg-[#7ED957]/10 text-[#174C4F]' 
                         : 'border-gray-200 hover:border-[#7ED957] text-gray-700'
@@ -296,7 +715,7 @@ function App() {
                   <button
                     key={gender}
                     onClick={() => updateQuizData('gender', gender)}
-                    className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+                    className={`p-4 rounded-lg border-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7ED957] ${
                       quizData.gender === gender 
                         ? 'border-[#7ED957] bg-[#7ED957]/10 text-[#174C4F]' 
                         : 'border-gray-200 hover:border-[#7ED957] text-gray-700'
@@ -326,7 +745,7 @@ function App() {
                 <button
                   key={activity}
                   onClick={() => updateQuizData('activity', activity)}
-                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-300 ${
+                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7ED957] ${
                     quizData.activity === activity 
                       ? 'border-[#7ED957] bg-[#7ED957]/10 text-[#174C4F]' 
                       : 'border-gray-200 hover:border-[#7ED957] text-gray-700'
@@ -355,11 +774,11 @@ function App() {
                 <button
                   key={diet}
                   onClick={() => updateQuizData('diet', diet)}
-                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-300 ${
+                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7ED957] ${
                     quizData.diet === diet 
                       ? 'border-[#7ED957] bg-[#7ED957]/10 text-[#174C4F]' 
                       : 'border-gray-200 hover:border-[#7ED957] text-gray-700'
-                  }`}
+                    }`}
                 >
                   {diet}
                 </button>
@@ -394,7 +813,7 @@ function App() {
                       updateQuizData('goals', [...currentGoals, goal]);
                     }
                   }}
-                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-300 ${
+                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7ED957] ${
                     (quizData.goals || []).includes(goal)
                       ? 'border-[#7ED957] bg-[#7ED957]/10 text-[#174C4F]' 
                       : 'border-gray-200 hover:border-[#7ED957] text-gray-700'
@@ -420,7 +839,7 @@ function App() {
     if (!screen) return null;
 
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
+      <div className="min-h-screen bg-[#F5F7F8] p-4">
         <div className="max-w-2xl mx-auto">
           {/* Progress Bar */}
           <div className="bg-white rounded-lg p-6 mb-6 shadow-sm">
@@ -453,7 +872,7 @@ function App() {
                     setCurrentScreen('welcome');
                   }
                 }}
-                className="text-gray-600 hover:text-[#174C4F] transition-colors duration-300 inline-flex items-center gap-2"
+                className="text-gray-600 hover:text-[#174C4F] transition-colors duration-300 inline-flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#7ED957] rounded-lg px-3 py-2"
               >
                 <ArrowLeft className="w-5 h-5" />
                 Back
@@ -461,7 +880,7 @@ function App() {
               <button 
                 onClick={() => setCurrentScreen(screen.next as Screen)}
                 disabled={!screen.canProceed}
-                className="bg-[#7ED957] hover:bg-[#6BC444] disabled:bg-gray-300 disabled:cursor-not-allowed text-[#174C4F] font-semibold px-6 py-3 rounded-lg transition-all duration-300 inline-flex items-center gap-2"
+                className="bg-[#7ED957] hover:bg-[#6BC444] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 inline-flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
               >
                 Continue
                 <ArrowRight className="w-5 h-5" />
@@ -474,7 +893,7 @@ function App() {
   };
 
   const renderResults = () => (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-[#F5F7F8] p-4">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
           <div className="text-center mb-8">
@@ -487,7 +906,7 @@ function App() {
 
           <div className="space-y-6">
             {/* Energy Support */}
-            <div className="border-l-4 border-[#7ED957] bg-gray-50 p-6 rounded-r-lg">
+            <div className="border-l-4 border-[#7ED957] bg-[#F5F7F8] p-6 rounded-r-lg">
               <h3 className="text-2xl font-bold text-[#174C4F] mb-3 flex items-center gap-3">
                 <Zap className="w-6 h-6 text-[#7ED957]" />
                 Energy Support
@@ -509,7 +928,7 @@ function App() {
             </div>
 
             {/* Cognitive Function */}
-            <div className="border-l-4 border-[#7ED957] bg-gray-50 p-6 rounded-r-lg">
+            <div className="border-l-4 border-[#7ED957] bg-[#F5F7F8] p-6 rounded-r-lg">
               <h3 className="text-2xl font-bold text-[#174C4F] mb-3 flex items-center gap-3">
                 <Brain className="w-6 h-6 text-[#7ED957]" />
                 Cognitive Function
@@ -531,7 +950,7 @@ function App() {
             </div>
 
             {/* Recovery Support */}
-            <div className="border-l-4 border-[#7ED957] bg-gray-50 p-6 rounded-r-lg">
+            <div className="border-l-4 border-[#7ED957] bg-[#F5F7F8] p-6 rounded-r-lg">
               <h3 className="text-2xl font-bold text-[#174C4F] mb-3 flex items-center gap-3">
                 <Activity className="w-6 h-6 text-[#7ED957]" />
                 Recovery Support
@@ -556,7 +975,7 @@ function App() {
           <div className="text-center mt-8">
             <button 
               onClick={() => setCurrentScreen('email')}
-              className="bg-[#7ED957] hover:bg-[#6BC444] text-[#174C4F] font-semibold px-8 py-4 rounded-full text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+              className="bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-8 py-4 rounded-full text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
             >
               <Mail className="w-6 h-6" />
               Email Me My Plan
@@ -583,8 +1002,6 @@ function App() {
           <input
             type="email"
             placeholder="Enter your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-6 py-4 border-2 border-gray-200 rounded-lg focus:border-[#7ED957] focus:outline-none text-lg"
           />
           <button 
@@ -593,7 +1010,7 @@ function App() {
               alert('Plan sent to your email! Check your inbox in a few minutes.');
               setCurrentScreen('landing');
             }}
-            className="w-full bg-[#7ED957] hover:bg-[#6BC444] text-[#174C4F] font-semibold px-8 py-4 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center justify-center gap-2"
+            className="w-full bg-[#7ED957] hover:bg-[#6BC444] text-white font-semibold px-8 py-4 rounded-lg text-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#7ED957]/50"
           >
             Send My Plan
             <ArrowRight className="w-6 h-6" />
@@ -605,7 +1022,7 @@ function App() {
         </div>
         <button 
           onClick={() => setCurrentScreen('results')}
-          className="text-[#174C4F] hover:text-[#2a7073] transition-colors duration-300"
+          className="text-[#174C4F] hover:text-[#2a7073] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#7ED957] rounded-lg px-3 py-2"
         >
           ← Back to results
         </button>
