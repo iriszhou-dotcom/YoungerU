@@ -260,14 +260,14 @@ function App() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 lg:py-32">
           <div className="max-w-3xl">
             <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-              Feel younger, <br />
-              live stronger.
+              Your personal <br />
+              anti-aging system.
             </h1>
             <p className="text-xl lg:text-2xl mb-8 opacity-90 leading-relaxed">
-              Personalized, science-backed supplement guidance in 3 minutes.
+              Simple tests, personalized supplement guidance, and habit tracking.
             </p>
             <p className="text-lg lg:text-xl mb-8 opacity-80 leading-relaxed">
-              Boost energy, focus, and recovery at any age.
+              Don't guess at aging — measure, track, improve.
             </p>
             <button 
               onClick={() => setCurrentScreen('welcome')}
@@ -289,12 +289,178 @@ function App() {
             </blockquote>
             <p className="text-gray-600 mt-6 text-lg">— Sound familiar?</p>
             <p className="text-gray-700 mt-4 text-xl font-medium">
-              Most people waste money on supplements that don't work because they aren't personalized.
+              You don't have to fight aging alone. Small, science-backed actions today = a stronger you tomorrow.
             </p>
           </div>
         </div>
       </div>
 
+      {/* Science + Data Section */}
+      <div className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-[#174C4F]">
+              Science-backed, not hype-driven
+            </h2>
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              YoungerU uses lifestyle signals (sleep, diet, activity) to suggest evidence-backed supplements that fit your body — no hype, just clarity.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-green-600">A</span>
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-[#174C4F]">Strong Evidence</h3>
+              <p className="text-gray-600">Multiple clinical trials, peer-reviewed research</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-yellow-600">B</span>
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-[#174C4F]">Moderate Evidence</h3>
+              <p className="text-gray-600">Some studies, promising but limited data</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-orange-600">C</span>
+              </div>
+              <h3 className="text-xl font-bold mb-2 text-[#174C4F]">Emerging Evidence</h3>
+              <p className="text-gray-600">Early research, traditional use, theoretical benefits</p>
+            </div>
+          </div>
+
+          <div className="bg-[#F5F7F8] p-8 rounded-2xl">
+            <h3 className="text-2xl font-bold text-center mb-6 text-[#174C4F]">Why YoungerU vs. Others</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-300">
+                    <th className="text-left py-3 px-4 font-semibold text-[#174C4F]"></th>
+                    <th className="text-center py-3 px-4 font-semibold text-[#174C4F]">Others</th>
+                    <th className="text-center py-3 px-4 font-semibold text-[#7ED957]">YoungerU</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-700">
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">Approach</td>
+                    <td className="py-3 px-4 text-center">Endless pills, confusing claims</td>
+                    <td className="py-3 px-4 text-center text-[#174C4F] font-semibold">Clear, tailored, science-backed</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">Personalization</td>
+                    <td className="py-3 px-4 text-center">One-size-fits-all</td>
+                    <td className="py-3 px-4 text-center text-[#174C4F] font-semibold">Lifestyle-based recommendations</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-3 px-4 font-medium">Evidence</td>
+                    <td className="py-3 px-4 text-center">Marketing claims</td>
+                    <td className="py-3 px-4 text-center text-[#174C4F] font-semibold">Peer-reviewed research</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4 font-medium">Cost</td>
+                    <td className="py-3 px-4 text-center">Wasted money on wrong supplements</td>
+                    <td className="py-3 px-4 text-center text-[#174C4F] font-semibold">Targeted, cost-effective choices</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Testing & Tracking Teaser */}
+      <div className="py-20 bg-[#174C4F] text-white">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              The future of personalized health
+            </h2>
+            <p className="text-xl opacity-90 max-w-3xl mx-auto leading-relaxed">
+              We're building the most comprehensive anti-aging system. Here's where we're headed.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-[#7ED957] rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl font-bold text-[#174C4F]">1</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Simple lifestyle quiz</h3>
+              <p className="text-lg opacity-90">Available today</p>
+              <p className="text-gray-300 mt-2">Get personalized supplement guidance in 3 minutes</p>
+            </div>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl font-bold text-white">2</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Blood test integration</h3>
+              <p className="text-lg text-[#7ED957]">Coming soon</p>
+              <p className="text-gray-300 mt-2">Optional biomarker tracking for deeper insights</p>
+            </div>
+            <div className="text-center">
+              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl font-bold text-white">3</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-4">Progress reports</h3>
+              <p className="text-lg text-[#7ED957]">Coming soon</p>
+              <p className="text-gray-300 mt-2">Data-driven insights on your health journey</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Routine + System Section */}
+      <div className="py-20 bg-[#F5F7F8]">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-[#174C4F]">
+              Your daily anti-aging routine
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              See exactly how YoungerU fits into your life. Simple, sustainable habits that compound over time.
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-2xl p-8 shadow-lg">
+            <div className="space-y-8">
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-8 h-8 text-yellow-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-[#174C4F] mb-2">Morning (7:00 AM)</h3>
+                  <p className="text-gray-700">Omega-3 with breakfast + energy support stack</p>
+                  <p className="text-sm text-gray-500 mt-1">Takes 30 seconds, sets you up for sustained energy</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Activity className="w-8 h-8 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-[#174C4F] mb-2">Evening (8:00 PM)</h3>
+                  <p className="text-gray-700">Magnesium + recovery support with dinner</p>
+                  <p className="text-sm text-gray-500 mt-1">Optimize recovery and prepare for restorative sleep</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-[#174C4F] mb-2">Weekly Check-in</h3>
+                  <p className="text-gray-700">Track how you feel: energy, focus, recovery</p>
+                  <p className="text-sm text-gray-500 mt-1">2-minute reflection to optimize your protocol</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Solution Section */}
       <div id="solution" className="py-20">
         <div className="max-w-6xl mx-auto px-4">
@@ -342,7 +508,7 @@ function App() {
             Get your free Supplement Clarity Guide
           </h2>
           <p className="text-xl mb-12 opacity-90 leading-relaxed max-w-3xl mx-auto">
-            Join the waitlist and we'll send a 2-page starter guide: what to try first, how to time supplements, and safety basics.
+            Join the waitlist and we'll send a 2-page starter guide: what to try first, how to time supplements, and safety basics. Plus early access to our anti-aging system.
           </p>
           
           {inlineFormSuccess ? (
@@ -475,9 +641,9 @@ function App() {
       <div id="pricing" className="py-20 bg-[#174C4F] text-white">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-4xl lg:text-5xl font-bold text-center mb-16">
-            What's next
+            Future features to get excited about
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
             <div className="bg-white/10 p-8 rounded-2xl">
               <h3 className="text-2xl font-bold mb-4">Basic (Free)</h3>
               <p className="text-lg opacity-90 leading-relaxed">
@@ -500,6 +666,37 @@ function App() {
               >
                 Join the Waitlist
               </button>
+            </div>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white/5 p-6 rounded-xl text-center">
+              <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Activity className="w-6 h-6 text-[#174C4F]" />
+              </div>
+              <h4 className="font-semibold mb-2">Health Dashboard</h4>
+              <p className="text-sm opacity-80">Track energy, focus, and recovery trends over time</p>
+            </div>
+            <div className="bg-white/5 p-6 rounded-xl text-center">
+              <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-6 h-6 text-[#174C4F]" />
+              </div>
+              <h4 className="font-semibold mb-2">Lab Integration</h4>
+              <p className="text-sm opacity-80">Optional biomarker tracking for deeper insights</p>
+            </div>
+            <div className="bg-white/5 p-6 rounded-xl text-center">
+              <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Star className="w-6 h-6 text-[#174C4F]" />
+              </div>
+              <h4 className="font-semibold mb-2">Community</h4>
+              <p className="text-sm opacity-80">Shared protocols and progress stories</p>
+            </div>
+            <div className="bg-white/5 p-6 rounded-xl text-center">
+              <div className="w-12 h-12 bg-[#7ED957] rounded-full flex items-center justify-center mx-auto mb-4">
+                <Brain className="w-6 h-6 text-[#174C4F]" />
+              </div>
+              <h4 className="font-semibold mb-2">Education Hub</h4>
+              <p className="text-sm opacity-80">Learn what's hype vs what actually works</p>
             </div>
           </div>
         </div>
@@ -600,7 +797,7 @@ function App() {
       {/* Footer */}
       <div className="py-16 bg-gray-900 text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold mb-4">Ready to feel younger?</h3>
+          <h3 className="text-3xl font-bold mb-4">Your personal anti-aging system awaits</h3>
           <p className="text-gray-300 mb-8 text-lg">
             Join the waitlist and get the Supplement Clarity Guide.
           </p>
