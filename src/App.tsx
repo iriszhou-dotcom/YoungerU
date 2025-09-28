@@ -14,8 +14,10 @@ import {
   ChevronDown,
   X,
   Download,
-  Menu
+  Menu,
+  MessageCircle
 } from 'lucide-react';
+import AIChat from './components/AIChat';
 
 type Screen = 'landing' | 'welcome' | 'quiz-basics' | 'quiz-lifestyle' | 'quiz-diet' | 'quiz-goals' | 'results' | 'email';
 
@@ -53,6 +55,7 @@ function App() {
   const [inlineFormSuccess, setInlineFormSuccess] = useState(false);
   const [footerFormSuccess, setFooterFormSuccess] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -793,6 +796,33 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* AI Chat Modal */}
+      {showChat && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg w-full max-w-2xl h-[600px] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-xl font-semibold text-gray-800">Health Assistant</h2>
+              <button
+                onClick={() => setShowChat(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <AIChat className="flex-1" />
+          </div>
+        </div>
+      )}
+
+      {/* Floating Chat Button */}
+      <button
+        onClick={() => setShowChat(true)}
+        className="fixed bottom-6 right-6 bg-[#7ED957] text-white p-4 rounded-full shadow-lg hover:bg-[#6BC847] transition-colors z-40"
+        aria-label="Open health assistant chat"
+      >
+        <MessageCircle className="w-6 h-6" />
+      </button>
 
       {/* Footer */}
       <div className="py-16 bg-gray-900 text-white">
