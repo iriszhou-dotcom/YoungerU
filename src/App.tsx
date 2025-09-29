@@ -414,56 +414,6 @@ function App() {
         </div>
       </div>
 
-      {/* Routine + System Section */}
-      <div className="py-20 bg-[#F5F7F8]">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-[#174C4F]">
-              Your daily anti-aging routine
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              See exactly how YoungerU fits into your life. Simple, sustainable habits that compound over time.
-            </p>
-          </div>
-          
-          <div className="bg-white rounded-2xl p-8 shadow-lg">
-            <div className="space-y-8">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-8 h-8 text-yellow-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-[#174C4F] mb-2">Morning (7:00 AM)</h3>
-                  <p className="text-gray-700">Omega-3 with breakfast + energy support stack</p>
-                  <p className="text-sm text-gray-500 mt-1">Takes 30 seconds, sets you up for sustained energy</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Activity className="w-8 h-8 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-[#174C4F] mb-2">Evening (8:00 PM)</h3>
-                  <p className="text-gray-700">Magnesium + recovery support with dinner</p>
-                  <p className="text-sm text-gray-500 mt-1">Optimize recovery and prepare for restorative sleep</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-[#174C4F] mb-2">Weekly Check-in</h3>
-                  <p className="text-gray-700">Track how you feel: energy, focus, recovery</p>
-                  <p className="text-sm text-gray-500 mt-1">2-minute reflection to optimize your protocol</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       {/* Solution Section */}
       <div id="solution" className="py-20">
         <div className="max-w-6xl mx-auto px-4">
