@@ -36,6 +36,27 @@ The migration automatically sets up these security policies:
 - **Library Items**: Public read access for all supplement information
 - **Community**: Public read access for questions and answers, authenticated users can post
 
+#### Questions Table RLS Policies
+
+The following RLS policies are applied to the `questions` table:
+
+```sql
+-- Enable RLS
+ALTER TABLE questions ENABLE ROW LEVEL SECURITY;
+
+-- Allow authenticated users to read all questions
+CREATE POLICY "questions read (authed)" ON questions 
+FOR SELECT TO authenticated USING (true);
+
+-- Allow authenticated users to insert their own questions
+CREATE POLICY "questions insert (authed)" ON questions 
+FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
+
+-- Allow anonymous users to read questions (optional)
+CREATE POLICY "questions read (anon)" ON questions 
+FOR SELECT TO anon USING (true);
+```
+
 ### Installation
 
 ```bash
