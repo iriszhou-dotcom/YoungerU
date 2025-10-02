@@ -95,10 +95,23 @@ export default function Community() {
     setError(null)
     setLoading(true)
     try {
+      // First, let's check what columns actually exist
+      const { data: testData, error: testError } = await supabase
+        .from('questions')
+        .select('*')
+        .limit(1)
+
+      if (testError) {
+        console.error('[Community] Test query error:', testError)
+        setError(`Database connection error: ${testError.message}`)
+        setLoading(false)
+        return
+      }
+
+      // Now fetch all questions with available columns
       const { data, error } = await supabase
         .from('questions')
-        .select('id, title, body, tags, is_published, likes_count, answers_count, created_at, user_id')
-        .eq('is_published', true)
+        .select('id, title, body, tags, created_at, user_id')
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -111,36 +124,60 @@ export default function Community() {
         throw error
       }
       
-      // Set questions first
-      setQuestions(data || [])
+      // Add default values for missing columns
+      const questionsWithDefaults = (data || []).map(q => ({
+        ...q,
+        is_published: true,
+        likes_count: 0,
+        answers_count: 0,
+        tags: q.tags || [],
+        is_liked: false,
+        is_saved: false
+      }))
+      
+      setQuestions(questionsWithDefaults)
       
       // Then fetch user interactions if logged in
-      if (user && data && data.length > 0) {
-        const questionIds = data.map(q => q.id)
+      if (user && questionsWithDefaults.length > 0) {
+        const questionIds = questionsWithDefaults.map(q => q.id)
         
-        // Fetch likes
-        const { data: likesData } = await supabase
-          .from('question_likes')
-          .select('question_id')
-          .eq('user_id', user.id)
-          .in('question_id', questionIds)
+        // Try to fetch likes (table might not exist yet)
+        try {
+          const { data: likesData } = await supabase
+            .from('question_likes')
+            .select('question_id')
+            .eq('user_id', user.id)
+            .in('question_id', questionIds)
+          
+          const likedQuestionIds = new Set(likesData?.map(l => l.question_id) || [])
+          
+          // Update questions with like state
+          setQuestions(prev => prev.map(q => ({
+            ...q,
+            is_liked: likedQuestionIds.has(q.id)
+          })))
+        } catch (likesError) {
+          console.log('[Community] Likes table not ready yet:', likesError)
+        }
         
-        // Fetch saves
-        const { data: savesData } = await supabase
-          .from('saved_questions')
-          .select('question_id')
-          .eq('user_id', user.id)
-          .in('question_id', questionIds)
-        
-        const likedQuestionIds = new Set(likesData?.map(l => l.question_id) || [])
-        const savedQuestionIds = new Set(savesData?.map(s => s.question_id) || [])
-        
-        // Update questions with interaction state
-        setQuestions(prev => prev.map(q => ({
-          ...q,
-          is_liked: likedQuestionIds.has(q.id),
-          is_saved: savedQuestionIds.has(q.id)
-        })))
+        // Try to fetch saves (table might not exist yet)
+        try {
+          const { data: savesData } = await supabase
+            .from('saved_questions')
+            .select('question_id')
+            .eq('user_id', user.id)
+            .in('question_id', questionIds)
+          
+          const savedQuestionIds = new Set(savesData?.map(s => s.question_id) || [])
+          
+          // Update questions with save state
+          setQuestions(prev => prev.map(q => ({
+            ...q,
+            is_saved: savedQuestionIds.has(q.id)
+          })))
+        } catch (savesError) {
+          console.log('[Community] Saves table not ready yet:', savesError)
+        }
       }
     } catch (error) {
       console.error('Error fetching questions:', error)
@@ -241,10 +278,9 @@ export default function Community() {
           user_id: user.id,
           title: newQuestion.title,
           body: newQuestion.body,
-          tags: newQuestion.tags,
-          is_published: true
+          tags: newQuestion.tags
         }])
-        .select('id, title, body, tags, is_published, likes_count, answers_count, created_at, user_id')
+        .select('id, title, body, tags, created_at, user_id')
         .single()
 
       if (error) {
@@ -257,6 +293,10 @@ export default function Community() {
       if (data) {
         setQuestions(prev => [{
           ...data,
+          is_published: true,
+          likes_count: 0,
+          answers_count: 0,
+          tags: data.tags || [],
           is_liked: false,
           is_saved: false
         }, ...prev])
