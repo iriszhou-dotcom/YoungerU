@@ -18,7 +18,11 @@ export default function RequireAuth({ children }: RequireAuthProps) {
   }
 
   if (!user) {
-    return <Navigate to="/auth/sign-in" state={{ from: location }} replace />
+    // Only redirect to sign-in if we're in the app section
+    if (location.pathname.startsWith('/app')) {
+      return <Navigate to="/auth/sign-in" state={{ from: location }} replace />
+    }
+    return <Navigate to="/" replace />
   }
 
   return <>{children}</>

@@ -12,7 +12,7 @@ export default function SignIn() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const from = location.state?.from?.pathname || '/planner'
+  const from = location.state?.from?.pathname || '/app/planner'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
