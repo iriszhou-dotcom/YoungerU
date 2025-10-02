@@ -93,47 +93,55 @@ export default function Community() {
 
   const fetchQuestions = async () => {
     setError(null)
+    setLoading(true)
     try {
       const { data, error } = await supabase
         .from('questions')
-        .select('id, title, body, tags, likes_count, answers_count, created_at, user_id')
+        .select('id, title, body, tags, is_published, likes_count, answers_count, created_at, user_id')
+        .eq('is_published', true)
         .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('Supabase error:', error)
-        setError("Failed to load questions. Please try again.")
+        console.error('[Community] Supabase error:', error)
+        if (error.message.includes('permission denied') || error.message.includes('RLS')) {
+          setError("Please sign in to view questions.")
+        } else {
+          setError(`Failed to load questions: ${error.message}`)
+        }
         throw error
       }
       
-      const questionsWithInteractions = await Promise.all(
-        (data || []).map(async (question) => {
-          if (!user) return question
-          
-          // Check if user liked this question
-          const { data: likeData } = await supabase
-            .from('question_likes')
-            .select('id')
-            .eq('question_id', question.id)
-            .eq('user_id', user.id)
-            .single()
-          
-          // Check if user saved this question
-          const { data: saveData } = await supabase
-            .from('saved_questions')
-            .select('id')
-            .eq('question_id', question.id)
-            .eq('user_id', user.id)
-            .single()
-          
-          return {
-            ...question,
-            is_liked: !!likeData,
-            is_saved: !!saveData
-          }
-        })
-      )
+      // Set questions first
+      setQuestions(data || [])
       
-      setQuestions(questionsWithInteractions)
+      // Then fetch user interactions if logged in
+      if (user && data && data.length > 0) {
+        const questionIds = data.map(q => q.id)
+        
+        // Fetch likes
+        const { data: likesData } = await supabase
+          .from('question_likes')
+          .select('question_id')
+          .eq('user_id', user.id)
+          .in('question_id', questionIds)
+        
+        // Fetch saves
+        const { data: savesData } = await supabase
+          .from('saved_questions')
+          .select('question_id')
+          .eq('user_id', user.id)
+          .in('question_id', questionIds)
+        
+        const likedQuestionIds = new Set(likesData?.map(l => l.question_id) || [])
+        const savedQuestionIds = new Set(savesData?.map(s => s.question_id) || [])
+        
+        // Update questions with interaction state
+        setQuestions(prev => prev.map(q => ({
+          ...q,
+          is_liked: likedQuestionIds.has(q.id),
+          is_saved: savedQuestionIds.has(q.id)
+        })))
+      }
     } catch (error) {
       console.error('Error fetching questions:', error)
     } finally {
@@ -225,6 +233,7 @@ export default function Community() {
   const askQuestion = async () => {
     if (!user || !newQuestion.title.trim() || !newQuestion.body.trim()) return
 
+    setLoading(true)
     try {
       const { data, error } = await supabase
         .from('questions')
@@ -232,13 +241,15 @@ export default function Community() {
           user_id: user.id,
           title: newQuestion.title,
           body: newQuestion.body,
-          tags: newQuestion.tags
+          tags: newQuestion.tags,
+          is_published: true
         }])
-        .select('id, title, body, tags, likes_count, answers_count, created_at, user_id')
+        .select('id, title, body, tags, is_published, likes_count, answers_count, created_at, user_id')
         .single()
 
       if (error) {
-        console.error('Supabase error:', error)
+        console.error('[Community] Post error:', error)
+        showToast(`Failed to post question: ${error.message}`, 'error')
         throw error
       }
 
@@ -258,13 +269,12 @@ export default function Community() {
       setShowAskModal(false)
       setNewQuestion({ title: '', body: '', tags: [] })
       
-      // Also trigger a refetch to ensure consistency
-      setTimeout(() => {
-        fetchQuestions()
-      }, 1000)
+      // Refetch to ensure consistency
+      await fetchQuestions()
     } catch (error) {
       console.error('Error posting question:', error)
-      showToast('Failed to post question. Please try again.', 'error')
+    } finally {
+      setLoading(false)
     }
   }
 
