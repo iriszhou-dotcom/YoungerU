@@ -496,9 +496,9 @@ export default function Community() {
               </button>
             </div>
             <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-xl">
-              <img 
-                src="https://images.pexels.com/photos/5699456/pexels-photo-5699456.jpeg?auto=compress&cs=tinysrgb&w=800" 
-                alt="Two adults discussing wellness tips over coffee"
+              <img
+                src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                alt="Diverse group of people collaborating and sharing health knowledge"
                 className="w-full h-full object-cover"
               />
             </div>
