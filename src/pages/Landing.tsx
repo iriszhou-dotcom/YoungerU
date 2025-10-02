@@ -245,6 +245,12 @@ export default function Landing() {
             >
               Try Demo First
             </Link>
+            <Link
+              to="/app"
+              className="bg-[#174C4F] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#174C4F]/90 transition-all duration-200 text-lg"
+            >
+              Full App Access
+            </Link>
           </div>
         </div>
       </div>
