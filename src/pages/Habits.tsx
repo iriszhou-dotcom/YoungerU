@@ -178,81 +178,83 @@ export default function Habits() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F7F8] py-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#F5F7F8] to-white py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-[#174C4F] mb-2">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl lg:text-5xl font-bold text-[#174C4F] mb-6">
             Habit Builder & Streak Tracker
           </h1>
-          <p className="text-gray-600">
+          <p className="text-xl text-gray-600">
             Small, consistent steps beat all-or-nothing.
           </p>
         </div>
 
         {/* Create Habit Button */}
-        <div className="mb-8">
+        <div className="mb-12">
           <button
             onClick={() => setShowCreateModal(true)}
             data-track="habit_create"
-            className="bg-[#7ED957] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#6BC847] flex items-center gap-2"
+            className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] flex items-center gap-3 transition-all duration-200 hover-lift shadow-lg text-lg"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5" />
             Create Habit
           </button>
         </div>
 
         {/* Habits List */}
         {habits.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {habits.map(habit => (
-              <div key={habit.id} className="bg-white rounded-lg shadow-sm p-6">
+              <div key={habit.id} className="bg-white rounded-3xl shadow-soft p-8 hover:shadow-lg transition-all duration-300 group">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-6">
                     <button
                       onClick={() => toggleHabitToday(habit.id)}
-                      className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      className={`w-12 h-12 rounded-2xl border-2 flex items-center justify-center transition-all duration-200 hover-lift ${
                         isHabitDoneToday(habit.id)
                           ? 'bg-[#7ED957] border-[#7ED957] text-white'
-                          : 'border-gray-300 hover:border-[#7ED957]'
+                          : 'border-gray-300 hover:border-[#7ED957] hover:bg-[#7ED957]/10'
                       }`}
                     >
-                      {isHabitDoneToday(habit.id) && <Check className="w-4 h-4" />}
+                      {isHabitDoneToday(habit.id) && <Check className="w-6 h-6" />}
                     </button>
                     
                     <div>
-                      <h3 className="font-semibold text-[#174C4F]">{habit.title}</h3>
+                      <h3 className="text-xl font-bold text-[#174C4F] group-hover:text-[#7ED957] transition-colors">{habit.title}</h3>
                       {habit.reminder_time && (
-                        <p className="text-sm text-gray-500">Reminder: {habit.reminder_time}</p>
+                        <p className="text-base text-gray-500 mt-1">Reminder: {habit.reminder_time}</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Flame className="w-5 h-5 text-orange-500" />
-                      <span className="font-semibold text-orange-500">
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-3 bg-orange-50 px-4 py-2 rounded-2xl">
+                      <Flame className="w-6 h-6 text-orange-500" />
+                      <span className="text-xl font-bold text-orange-500">
                         {getStreak(habit.id)}
                       </span>
                     </div>
                     
-                    <Calendar className="w-5 h-5 text-gray-400" />
+                    <Calendar className="w-6 h-6 text-gray-400" />
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <Plus className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="text-center py-20">
+            <div className="w-24 h-24 bg-[#174C4F]/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
+              <Plus className="w-12 h-12 text-[#174C4F]/60" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
               Create your first habit
             </h3>
-            <p className="text-gray-500 mb-4">
+            <p className="text-lg text-gray-500 mb-8">
               Start building healthy routines that stick.
             </p>
             <button
               onClick={() => setShowCreateModal(true)}
-              className="bg-[#7ED957] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#6BC847]"
+              className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] transition-all duration-200 hover-lift shadow-lg text-lg"
             >
               Get Started
             </button>
@@ -262,14 +264,14 @@ export default function Habits() {
         {/* Create Habit Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-[#174C4F] mb-4">
+            <div className="bg-white rounded-3xl max-w-md w-full p-8">
+              <h3 className="text-2xl font-bold text-[#174C4F] mb-8">
                 Create New Habit
               </h3>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-base font-semibold text-[#174C4F] mb-3">
                     Habit Title
                   </label>
                   <input
@@ -277,34 +279,34 @@ export default function Habits() {
                     value={newHabit.title}
                     onChange={(e) => setNewHabit(prev => ({ ...prev, title: e.target.value }))}
                     placeholder="e.g., Take Vitamin D"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#7ED957] focus:border-[#7ED957]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-base font-semibold text-[#174C4F] mb-3">
                     Reminder Time (optional)
                   </label>
                   <input
                     type="time"
                     value={newHabit.reminder_time}
                     onChange={(e) => setNewHabit(prev => ({ ...prev, reminder_time: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#7ED957] focus:border-[#7ED957]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-4 mt-8">
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                  className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={createHabit}
                   disabled={!newHabit.title.trim()}
-                  className="flex-1 px-4 py-2 bg-[#7ED957] text-white rounded-md hover:bg-[#6BC847] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-6 py-3 bg-[#7ED957] text-white rounded-xl hover:bg-[#6BC847] disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold"
                 >
                   Create Habit
                 </button>
