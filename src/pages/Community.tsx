@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, MessageCircle, Clock, User, Flag } from 'lucide-react'
+import { Plus, MessageCircle, Clock, User, Flag, Heart, Bookmark, Send } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../components/Toast'
@@ -10,21 +10,38 @@ interface Question {
   title: string
   body: string
   tags: string[]
-  is_published: boolean
+  likes_count: number
+  answers_count: number
   created_at: string
   user_id: string
+  is_liked?: boolean
+  is_saved?: boolean
+}
+
+interface Answer {
+  id: number
+  question_id: number
+  body: string
+  is_expert: boolean
+  likes_count: number
+  created_at: string
+  user_id: string
+  is_liked?: boolean
 }
 
 export default function Community() {
   const { user } = useAuth()
   const { showToast } = useToast()
   const [questions, setQuestions] = useState<Question[]>([])
+  const [answers, setAnswers] = useState<{ [key: number]: Answer[] }>({})
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTag, setSelectedTag] = useState('All')
   const [showAskModal, setShowAskModal] = useState(false)
+  const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null)
+  const [newAnswer, setNewAnswer] = useState('')
   const [newQuestion, setNewQuestion] = useState({
     title: '',
     body: '',
@@ -44,9 +61,24 @@ export default function Community() {
         table: 'questions' 
       }, (payload) => {
         const newQuestion = payload.new as Question
-        if (newQuestion.is_published) {
-          setQuestions(prev => [newQuestion, ...prev])
-        }
+        setQuestions(prev => [newQuestion, ...prev])
+      })
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'answers' 
+      }, (payload) => {
+        const newAnswer = payload.new as Answer
+        setAnswers(prev => ({
+          ...prev,
+          [newAnswer.question_id]: [...(prev[newAnswer.question_id] || []), newAnswer]
+        }))
+        // Update question answers count
+        setQuestions(prev => prev.map(q => 
+          q.id === newAnswer.question_id 
+            ? { ...q, answers_count: q.answers_count + 1 }
+            : q
+        ))
       })
       .subscribe()
 
@@ -64,24 +96,85 @@ export default function Community() {
     try {
       const { data, error } = await supabase
         .from('questions')
-        .select('id, title, body, tags, is_published, created_at, user_id')
-        .eq('is_published', true)
+        .select('id, title, body, tags, likes_count, answers_count, created_at, user_id')
         .order('created_at', { ascending: false })
 
       if (error) {
         console.error('Supabase error:', error)
-        if (error.code === 'PGRST301') {
-          setError("We couldn't load questions. Please sign in.")
-        } else {
-          setError("Failed to load questions. Please try again.")
-        }
+        setError("Failed to load questions. Please try again.")
         throw error
       }
-      setQuestions(data || [])
+      
+      const questionsWithInteractions = await Promise.all(
+        (data || []).map(async (question) => {
+          if (!user) return question
+          
+          // Check if user liked this question
+          const { data: likeData } = await supabase
+            .from('question_likes')
+            .select('id')
+            .eq('question_id', question.id)
+            .eq('user_id', user.id)
+            .single()
+          
+          // Check if user saved this question
+          const { data: saveData } = await supabase
+            .from('saved_questions')
+            .select('id')
+            .eq('question_id', question.id)
+            .eq('user_id', user.id)
+            .single()
+          
+          return {
+            ...question,
+            is_liked: !!likeData,
+            is_saved: !!saveData
+          }
+        })
+      )
+      
+      setQuestions(questionsWithInteractions)
     } catch (error) {
       console.error('Error fetching questions:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchAnswers = async (questionId: number) => {
+    try {
+      const { data, error } = await supabase
+        .from('answers')
+        .select('id, question_id, body, is_expert, likes_count, created_at, user_id')
+        .eq('question_id', questionId)
+        .order('created_at', { ascending: true })
+
+      if (error) throw error
+      
+      const answersWithLikes = await Promise.all(
+        (data || []).map(async (answer) => {
+          if (!user) return answer
+          
+          const { data: likeData } = await supabase
+            .from('answer_likes')
+            .select('id')
+            .eq('answer_id', answer.id)
+            .eq('user_id', user.id)
+            .single()
+          
+          return {
+            ...answer,
+            is_liked: !!likeData
+          }
+        })
+      )
+      
+      setAnswers(prev => ({
+        ...prev,
+        [questionId]: answersWithLikes
+      }))
+    } catch (error) {
+      console.error('Error fetching answers:', error)
     }
   }
 
@@ -139,10 +232,9 @@ export default function Community() {
           user_id: user.id,
           title: newQuestion.title,
           body: newQuestion.body,
-          tags: newQuestion.tags,
-          is_published: true
+          tags: newQuestion.tags
         }])
-        .select('id, title, body, tags, is_published, created_at, user_id')
+        .select('id, title, body, tags, likes_count, answers_count, created_at, user_id')
         .single()
 
       if (error) {
@@ -152,7 +244,11 @@ export default function Community() {
 
       // Optimistically add to local state
       if (data) {
-        setQuestions(prev => [data, ...prev])
+        setQuestions(prev => [{
+          ...data,
+          is_liked: false,
+          is_saved: false
+        }, ...prev])
         
         // Scroll to top and briefly highlight
         window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -169,6 +265,119 @@ export default function Community() {
     } catch (error) {
       console.error('Error posting question:', error)
       showToast('Failed to post question. Please try again.', 'error')
+    }
+  }
+
+  const toggleLike = async (questionId: number) => {
+    if (!user) return
+    
+    const question = questions.find(q => q.id === questionId)
+    if (!question) return
+    
+    try {
+      if (question.is_liked) {
+        // Unlike
+        await supabase
+          .from('question_likes')
+          .delete()
+          .eq('question_id', questionId)
+          .eq('user_id', user.id)
+      } else {
+        // Like
+        await supabase
+          .from('question_likes')
+          .insert({ question_id: questionId, user_id: user.id })
+      }
+      
+      // Update local state
+      setQuestions(prev => prev.map(q => 
+        q.id === questionId 
+          ? { 
+              ...q, 
+              is_liked: !q.is_liked,
+              likes_count: q.is_liked ? q.likes_count - 1 : q.likes_count + 1
+            }
+          : q
+      ))
+    } catch (error) {
+      console.error('Error toggling like:', error)
+      showToast('Failed to update like', 'error')
+    }
+  }
+
+  const toggleSave = async (questionId: number) => {
+    if (!user) return
+    
+    const question = questions.find(q => q.id === questionId)
+    if (!question) return
+    
+    try {
+      if (question.is_saved) {
+        // Unsave
+        await supabase
+          .from('saved_questions')
+          .delete()
+          .eq('question_id', questionId)
+          .eq('user_id', user.id)
+      } else {
+        // Save
+        await supabase
+          .from('saved_questions')
+          .insert({ question_id: questionId, user_id: user.id })
+      }
+      
+      // Update local state
+      setQuestions(prev => prev.map(q => 
+        q.id === questionId 
+          ? { ...q, is_saved: !q.is_saved }
+          : q
+      ))
+      
+      showToast(question.is_saved ? 'Question unsaved' : 'Question saved', 'success')
+    } catch (error) {
+      console.error('Error toggling save:', error)
+      showToast('Failed to save question', 'error')
+    }
+  }
+
+  const submitAnswer = async (questionId: number) => {
+    if (!user || !newAnswer.trim()) return
+    
+    try {
+      const { data, error } = await supabase
+        .from('answers')
+        .insert([{
+          question_id: questionId,
+          user_id: user.id,
+          body: newAnswer
+        }])
+        .select('id, question_id, body, is_expert, likes_count, created_at, user_id')
+        .single()
+
+      if (error) throw error
+      
+      // Add to local state
+      setAnswers(prev => ({
+        ...prev,
+        [questionId]: [...(prev[questionId] || []), { ...data, is_liked: false }]
+      }))
+      
+      setNewAnswer('')
+      showToast('Answer posted successfully!', 'success')
+    } catch (error) {
+      console.error('Error posting answer:', error)
+      showToast('Failed to post answer', 'error')
+    }
+  }
+
+  const toggleQuestionExpansion = (questionId: number) => {
+    if (expandedQuestion === questionId) {
+      setExpandedQuestion(null)
+    } else {
+      setExpandedQuestion(questionId)
+      if (!answers[questionId]) {
+        fetchAnswers(questionId)
+      }
     }
   }
 
@@ -287,21 +496,18 @@ export default function Community() {
         {filteredQuestions.length > 0 ? (
           <div className="space-y-6">
             {filteredQuestions.map((question, index) => (
-              <div 
+              <div
                 key={question.id} 
                 className={`bg-white rounded-3xl shadow-soft p-8 hover:shadow-lg transition-all duration-300 hover-lift group ${
                   index === 0 && questions[0]?.id === question.id ? 'ring-2 ring-[#7ED957] ring-opacity-50 shadow-lg' : ''
                 }`}
               >
                 <div className="flex items-start justify-between mb-4">
-                  <Link
-                    to={`/community/question/${question.id}`}
-                    className="flex-1"
-                  >
+                  <div className="flex-1">
                     <h3 className="font-bold text-[#174C4F] text-xl group-hover:text-[#7ED957] transition-colors leading-tight">
                       {question.title}
                     </h3>
-                  </Link>
+                  </div>
                   <button className="text-gray-400 hover:text-gray-600 ml-6 p-2">
                     <Flag className="w-4 h-4" />
                   </button>
@@ -312,9 +518,9 @@ export default function Community() {
                 </p>
 
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {(question.tags || []).map(tag => (
+                  {(question.tags || []).map((tag, tagIndex) => (
                     <span
-                      key={tag}
+                      key={`${question.id}-${tag}-${tagIndex}`}
                       className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded-full font-medium"
                     >
                       {tag}
@@ -322,7 +528,8 @@ export default function Community() {
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between text-base text-gray-500">
+                {/* Action buttons */}
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
                       <User className="w-5 h-5" />
@@ -335,11 +542,102 @@ export default function Community() {
                       <span>{formatDate(question.created_at)}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MessageCircle className="w-5 h-5" />
-                    <span>0 answers</span>
+                  
+                  <div className="flex items-center gap-4">
+                    {user && (
+                      <>
+                        <button
+                          onClick={() => toggleLike(question.id)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                            question.is_liked 
+                              ? 'text-red-600 bg-red-50 hover:bg-red-100' 
+                              : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${question.is_liked ? 'fill-current' : ''}`} />
+                          <span className="text-sm font-medium">{question.likes_count}</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => toggleSave(question.id)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                            question.is_saved 
+                              ? 'text-[#7ED957] bg-green-50 hover:bg-green-100' 
+                              : 'text-gray-600 hover:text-[#7ED957] hover:bg-green-50'
+                          }`}
+                        >
+                          <Bookmark className={`w-4 h-4 ${question.is_saved ? 'fill-current' : ''}`} />
+                        </button>
+                      </>
+                    )}
+                    
+                    <button
+                      onClick={() => toggleQuestionExpansion(question.id)}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 hover:text-[#7ED957] hover:bg-green-50 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      <span className="text-sm font-medium">{question.answers_count} answers</span>
+                    </button>
                   </div>
                 </div>
+                
+                {/* Expanded answers section */}
+                {expandedQuestion === question.id && (
+                  <div className="mt-6 pt-6 border-t border-gray-100">
+                    {/* Answers list */}
+                    <div className="space-y-4 mb-6">
+                      {(answers[question.id] || []).map((answer) => (
+                        <div key={answer.id} className="bg-gray-50 rounded-2xl p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <User className="w-4 h-4 text-gray-500" />
+                              <span className="text-sm text-gray-600">Member</span>
+                              {answer.is_expert && (
+                                <span className="px-2 py-1 bg-[#7ED957] text-white text-xs rounded-full font-medium">
+                                  Expert
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-sm text-gray-500">{formatDate(answer.created_at)}</span>
+                          </div>
+                          <p className="text-gray-700 mb-3">{answer.body}</p>
+                          {user && (
+                            <button
+                              className={`flex items-center gap-1 text-sm ${
+                                answer.is_liked 
+                                  ? 'text-red-600' 
+                                  : 'text-gray-500 hover:text-red-600'
+                              }`}
+                            >
+                              <Heart className={`w-3 h-3 ${answer.is_liked ? 'fill-current' : ''}`} />
+                              <span>{answer.likes_count}</span>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Answer input */}
+                    {user && (
+                      <div className="flex gap-3">
+                        <textarea
+                          value={newAnswer}
+                          onChange={(e) => setNewAnswer(e.target.value)}
+                          placeholder="Write your answer..."
+                          rows={3}
+                          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base resize-none"
+                        />
+                        <button
+                          onClick={() => submitAnswer(question.id)}
+                          disabled={!newAnswer.trim()}
+                          className="px-4 py-3 bg-[#7ED957] text-white rounded-xl hover:bg-[#6BC847] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                        >
+                          <Send className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
