@@ -27,7 +27,7 @@ interface Recommendation {
 }
 
 export default function Planner() {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const { showToast } = useToast()
   const [loading, setLoading] = useState(false)
   const [inputs, setInputs] = useState<PlannerInputs>({
@@ -62,7 +62,10 @@ export default function Planner() {
   }
 
   const generatePlan = async () => {
-    if (!user) return
+    if (!user) {
+      showToast('Please sign in to save your plan', 'info')
+      // Still generate plan for demo purposes
+    }
     
     setLoading(true)
     
@@ -108,19 +111,23 @@ export default function Planner() {
     setRecommendations(newRecommendations)
     
     // Save to database
-    try {
-      await supabase
-        .from('planner_sessions')
-        .insert({
-          user_id: user.id,
-          inputs,
-          output: newRecommendations
-        })
-      
-      showToast('Plan generated successfully!', 'success')
-    } catch (error) {
-      console.error('Error saving plan:', error)
-      showToast('Plan generated, but failed to save', 'error')
+    if (user) {
+      try {
+        await supabase
+          .from('planner_sessions')
+          .insert({
+            user_id: user.id,
+            inputs,
+            output: newRecommendations
+          })
+        
+        showToast('Plan generated and saved successfully!', 'success')
+      } catch (error) {
+        console.error('Error saving plan:', error)
+        showToast('Plan generated, but failed to save', 'error')
+      }
+    } else {
+      showToast('Plan generated! Sign in to save your results.', 'success')
     }
     
     setLoading(false)

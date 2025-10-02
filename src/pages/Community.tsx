@@ -268,7 +268,12 @@ export default function Community() {
   }
 
   const askQuestion = async () => {
-    if (!user || !newQuestion.title.trim() || !newQuestion.body.trim()) return
+    if (!user) {
+      showToast('Please sign in to ask questions', 'info')
+      return
+    }
+    
+    if (!newQuestion.title.trim() || !newQuestion.body.trim()) return
 
     setLoading(true)
     try {
@@ -319,7 +324,10 @@ export default function Community() {
   }
 
   const toggleLike = async (questionId: number) => {
-    if (!user) return
+    if (!user) {
+      showToast('Please sign in to like questions', 'info')
+      return
+    }
     
     const question = questions.find(q => q.id === questionId)
     if (!question) return
@@ -356,7 +364,10 @@ export default function Community() {
   }
 
   const toggleSave = async (questionId: number) => {
-    if (!user) return
+    if (!user) {
+      showToast('Please sign in to save questions', 'info')
+      return
+    }
     
     const question = questions.find(q => q.id === questionId)
     if (!question) return
@@ -391,7 +402,12 @@ export default function Community() {
   }
 
   const submitAnswer = async (questionId: number) => {
-    if (!user || !newAnswer.trim()) return
+    if (!user) {
+      showToast('Please sign in to post answers', 'info')
+      return
+    }
+    
+    if (!newAnswer.trim()) return
     
     try {
       const { data, error } = await supabase
@@ -487,7 +503,7 @@ export default function Community() {
                 className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] flex items-center gap-3 transition-all duration-200 hover-lift shadow-lg text-lg"
               >
                 <Plus className="w-5 h-5" />
-                Ask a Question
+                {user ? 'Ask a Question' : 'Sign In to Ask Questions'}
               </button>
             </div>
             <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-xl">
@@ -709,7 +725,7 @@ export default function Community() {
                 onClick={() => setShowAskModal(true)}
                 className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] transition-all duration-200 hover-lift shadow-lg text-lg"
               >
-                Ask the First Question
+                {user ? 'Ask the First Question' : 'Sign In to Ask Questions'}
               </button>
             )}
           </div>

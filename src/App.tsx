@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './hooks/useAuth'
 import { ToastProvider } from './components/Toast'
+import Navigation from './components/Navigation'
 import AppNavigation from './components/AppNavigation'
 import RequireAuth from './components/RequireAuth'
 
@@ -22,8 +23,31 @@ export default function App() {
       <ToastProvider>
         <Router>
           <Routes>
-            {/* Landing Page Route */}
-            <Route path="/" element={<Landing />} />
+            {/* Landing Page Route with its own navigation */}
+            <Route path="/" element={
+              <div className="min-h-screen bg-[#F5F7F8]">
+                <Navigation />
+                <Landing />
+                
+                {/* Footer */}
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
+                  </div>
+                </footer>
+              </div>
+            } />
             
             {/* Auth routes */}
             <Route path="/auth/sign-in" element={<SignIn />} />
@@ -36,38 +60,18 @@ export default function App() {
                 <Routes>
                   <Route path="/" element={<Navigate to="/app/planner" replace />} />
                   
-                  <Route path="/planner" element={
-                    <RequireAuth>
-                      <Planner />
-                    </RequireAuth>
-                  } />
+                  <Route path="/planner" element={<Planner />} />
                   
                   <Route path="/library" element={<Library />} />
                   <Route path="/library/:slug" element={<LibraryDetail />} />
                   
-                  <Route path="/habits" element={
-                    <RequireAuth>
-                      <Habits />
-                    </RequireAuth>
-                  } />
+                  <Route path="/habits" element={<Habits />} />
                   
-                  <Route path="/forecast" element={
-                    <RequireAuth>
-                      <Forecast />
-                    </RequireAuth>
-                  } />
+                  <Route path="/forecast" element={<Forecast />} />
                   
-                  <Route path="/safety" element={
-                    <RequireAuth>
-                      <Safety />
-                    </RequireAuth>
-                  } />
+                  <Route path="/safety" element={<Safety />} />
                   
-                  <Route path="/community" element={
-                    <RequireAuth>
-                      <Community />
-                    </RequireAuth>
-                  } />
+                  <Route path="/community" element={<Community />} />
                 </Routes>
                 
                 {/* Footer */}

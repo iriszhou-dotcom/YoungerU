@@ -30,15 +30,18 @@ export default function Landing() {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <Link
-                  to="/app"
+                  to="/app/planner"
                   className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] transition-all duration-200 hover-lift shadow-xl text-lg inline-flex items-center justify-center gap-2"
                 >
                   Start Your Plan
                   <ArrowRight className="w-5 h-5" />
                 </Link>
-                <button className="border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white/10 transition-all duration-200 text-lg">
+                <a
+                  href="#how-it-works"
+                  className="border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white/10 transition-all duration-200 text-lg inline-flex items-center justify-center"
+                >
                   See How It Works
-                </button>
+                </a>
               </div>
               
               {/* Trust Line */}
@@ -63,7 +66,7 @@ export default function Landing() {
       </div>
 
       {/* How It Works Section */}
-      <div className="py-24 bg-white">
+      <div id="how-it-works" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-[#174C4F] mb-4">
@@ -124,7 +127,7 @@ export default function Landing() {
       </div>
 
       {/* Features Section */}
-      <div className="py-24 bg-[#F5F7F8]">
+      <div id="features" className="py-24 bg-[#F5F7F8]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-[#174C4F] mb-4">
@@ -194,7 +197,7 @@ export default function Landing() {
             Join thousands who've transformed their wellness with personalized, science-backed guidance.
           </p>
           <Link
-            to="/app"
+            to="/app/planner"
             className="bg-[#7ED957] text-white px-12 py-5 rounded-2xl font-semibold hover:bg-[#6BC847] transition-all duration-200 hover-lift shadow-xl text-xl inline-flex items-center gap-3"
           >
             Start Your Plan Today
@@ -202,24 +205,6 @@ export default function Landing() {
           </Link>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-[#174C4F] text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold mb-2">YoungerU</h3>
-              <p className="text-white/80">Science-based wellness guidance</p>
-            </div>
-            <p className="text-white/60 mb-4">
-              Educational, not medical advice.
-            </p>
-            <p className="text-sm text-white/40">
-              © 2024 YoungerU. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

@@ -9,12 +9,9 @@ export default function Navigation() {
   const location = useLocation()
 
   const navLinks = [
-    { name: 'Planner', href: '/planner' },
-    { name: 'Library', href: '/library' },
-    { name: 'Habits', href: '/habits' },
-    { name: 'Forecast', href: '/forecast' },
-    { name: 'Safety', href: '/safety' },
-    { name: 'Community', href: '/community' },
+    { name: 'Features', href: '#features' },
+    { name: 'How It Works', href: '#how-it-works' },
+    { name: 'Try App', href: '/app' },
   ]
 
   const isActive = (href: string) => location.pathname === href
