@@ -75,7 +75,23 @@ export default function Habits() {
   }
 
   const createHabit = async () => {
-    if (!user || !newHabit.title.trim()) return
+    if (!newHabit.title.trim()) return
+    
+    if (!user) {
+      showToast('Sign up to save habits permanently!', 'info')
+      // Add to local state for demo
+      const demoHabit = {
+        id: Date.now(),
+        title: newHabit.title,
+        schedule: newHabit.schedule,
+        reminder_time: newHabit.reminder_time || null,
+        created_at: new Date().toISOString()
+      }
+      setHabits(prev => [demoHabit, ...prev])
+      setShowCreateModal(false)
+      setNewHabit({ title: '', schedule: { type: 'daily' }, reminder_time: '' })
+      return
+    }
 
     try {
       const { error } = await supabase

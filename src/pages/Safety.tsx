@@ -144,7 +144,12 @@ export default function Safety() {
   }
 
   const saveCheck = async () => {
-    if (!user || results.length === 0) return
+    if (results.length === 0) return
+    
+    if (!user) {
+      showToast('Sign up to save safety checks permanently!', 'info')
+      return
+    }
 
     try {
       await supabase

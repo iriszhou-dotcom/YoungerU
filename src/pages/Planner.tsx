@@ -62,7 +62,10 @@ export default function Planner() {
   }
 
   const generatePlan = async () => {
-    if (!user) return
+    if (!user) {
+      // Allow demo functionality without user
+      console.log('Demo mode - plan generated without saving')
+    }
     
     setLoading(true)
     
@@ -108,19 +111,23 @@ export default function Planner() {
     setRecommendations(newRecommendations)
     
     // Save to database
-    try {
-      await supabase
-        .from('planner_sessions')
-        .insert({
-          user_id: user.id,
-          inputs,
-          output: newRecommendations
-        })
-      
-      showToast('Plan generated successfully!', 'success')
-    } catch (error) {
-      console.error('Error saving plan:', error)
-      showToast('Plan generated, but failed to save', 'error')
+    if (user) {
+      try {
+        await supabase
+          .from('planner_sessions')
+          .insert({
+            user_id: user.id,
+            inputs,
+            output: newRecommendations
+          })
+        
+        showToast('Plan generated and saved successfully!', 'success')
+      } catch (error) {
+        console.error('Error saving plan:', error)
+        showToast('Plan generated, but failed to save', 'error')
+      }
+    } else {
+      showToast('Plan generated! Sign up to save your results.', 'success')
     }
     
     setLoading(false)

@@ -48,6 +48,19 @@ export default function Navigation() {
                 )}
               </Link>
             ))}
+            <Link
+              to="/app"
+              className={`text-sm font-medium transition-all duration-200 relative py-2 ${
+                isActive('/app')
+                  ? 'text-[#174C4F]'
+                  : 'text-gray-600 hover:text-[#174C4F]'
+              }`}
+            >
+              Full App
+              {isActive('/app') && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#7ED957] rounded-full" />
+              )}
+            </Link>
           </div>
 
           {/* Auth Section */}

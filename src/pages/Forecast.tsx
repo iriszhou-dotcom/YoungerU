@@ -75,7 +75,12 @@ export default function Forecast() {
   }
 
   const saveForecast = async () => {
-    if (!user || projection.length === 0) return
+    if (projection.length === 0) return
+    
+    if (!user) {
+      showToast('Sign up to save forecasts permanently!', 'info')
+      return
+    }
 
     try {
       await supabase

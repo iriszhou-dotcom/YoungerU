@@ -39,9 +39,7 @@ export default function App() {
               <Route path="/planner" element={
                 <>
                   <Navigation />
-                  <RequireAuth>
-                    <Planner />
-                  </RequireAuth>
+                  <Planner />
                 </>
               } />
               
@@ -61,36 +59,36 @@ export default function App() {
               <Route path="/habits" element={
                 <>
                   <Navigation />
-                  <RequireAuth>
-                    <Habits />
-                  </RequireAuth>
+                  <Habits />
                 </>
               } />
               
               <Route path="/forecast" element={
                 <>
                   <Navigation />
-                  <RequireAuth>
-                    <Forecast />
-                  </RequireAuth>
+                  <Forecast />
                 </>
               } />
               
               <Route path="/safety" element={
                 <>
                   <Navigation />
-                  <RequireAuth>
-                    <Safety />
-                  </RequireAuth>
+                  <Safety />
                 </>
               } />
               
               <Route path="/community" element={
                 <>
                   <Navigation />
-                  <RequireAuth>
-                    <Community />
-                  </RequireAuth>
+                  <Community />
+                </>
+              } />
+              
+              {/* Full App Access Route */}
+              <Route path="/app" element={
+                <>
+                  <Navigation />
+                  <Planner />
                 </>
               } />
             </Routes>

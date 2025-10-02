@@ -268,7 +268,12 @@ export default function Community() {
   }
 
   const askQuestion = async () => {
-    if (!user || !newQuestion.title.trim() || !newQuestion.body.trim()) return
+    if (!newQuestion.title.trim() || !newQuestion.body.trim()) return
+    
+    if (!user) {
+      showToast('Sign up to post questions and interact with the community!', 'info')
+      return
+    }
 
     setLoading(true)
     try {
