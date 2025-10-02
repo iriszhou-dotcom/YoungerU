@@ -22,6 +22,7 @@ export default function Community() {
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTag, setSelectedTag] = useState('All')
   const [showAskModal, setShowAskModal] = useState(false)
@@ -47,6 +48,9 @@ export default function Community() {
         if (newQuestion.is_published) {
           setQuestions(prev => [newQuestion, ...prev])
         }
+        if (newQuestion.is_published) {
+          setQuestions(prev => [newQuestion, ...prev])
+        }
       })
       .subscribe()
 
@@ -61,13 +65,23 @@ export default function Community() {
 
   const fetchQuestions = async () => {
     setError(null)
+    setError(null)
     try {
       const { data, error } = await supabase
         .from('questions')
         .select('id, title, body, tags, is_published, created_at, user_id')
+        .select('id, title, body, tags, is_published, created_at, user_id')
         .eq('is_published', true)
         .order('created_at', { ascending: false })
 
+      if (error) {
+        console.error('Supabase error:', error)
+        if (error.code === 'PGRST301') {
+          setError("We couldn't load questions. Please sign in.")
+        } else {
+          setError("Failed to load questions. Please try again.")
+        }
+        throw error
       if (error) {
         console.error('Supabase error:', error)
         if (error.code === 'PGRST301') {
@@ -99,11 +113,15 @@ export default function Community() {
     // Tag filter
     if (selectedTag !== 'All') {
       filtered = filtered.filter(question =>
-        question.tags.includes(selectedTag)
+        question.tags && question.tags.includes(selectedTag)
       )
     }
 
     setFilteredQuestions(filtered)
+  }
+
+  const clearSearch = () => {
+    setSearchTerm('')
   }
 
   const clearSearch = () => {
@@ -144,6 +162,9 @@ export default function Community() {
         }])
         .select('id, title, body, tags, is_published, created_at, user_id')
         .single()
+        }])
+        .select('id, title, body, tags, is_published, created_at, user_id')
+        .single()
 
       if (error) {
         console.error('Supabase error:', error)
@@ -155,12 +176,27 @@ export default function Community() {
         setQuestions(prev => [data, ...prev])
         
         // Scroll to top and briefly highlight
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
+      }
+      // Optimistically add to local state
+      if (data) {
+        setQuestions(prev => [data, ...prev])
+        
+        // Scroll to top and briefly highlight
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
 
       showToast('Question posted successfully!', 'success')
       setShowAskModal(false)
       setNewQuestion({ title: '', body: '', tags: [] })
+      
+      // Also trigger a refetch to ensure consistency
+      setTimeout(() => {
+        fetchQuestions()
+      }, 1000)
       
       // Also trigger a refetch to ensure consistency
       setTimeout(() => {
@@ -189,10 +225,23 @@ export default function Community() {
     // Simple masking - in production you'd want to fetch from profiles
     return 'Member'
   }
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F5F7F8] flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7ED957]"></div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#F5F7F8] py-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
+            <p className="text-red-800">{error}</p>
+          </div>
+        </div>
       </div>
     )
   }
@@ -231,6 +280,14 @@ export default function Community() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-[#7ED957] focus:border-[#7ED957]"
               />
+              {searchTerm && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  ×
+                </button>
+              )}
               {searchTerm && (
                 <button
                   onClick={clearSearch}
@@ -280,6 +337,11 @@ export default function Community() {
                   index === 0 && questions[0]?.id === question.id ? 'ring-2 ring-[#7ED957] ring-opacity-50' : ''
                 }`}
               >
+                key={question.id} 
+                className={`bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-all ${
+                  index === 0 && questions[0]?.id === question.id ? 'ring-2 ring-[#7ED957] ring-opacity-50' : ''
+                }`}
+              >
                 <div className="flex items-start justify-between mb-3">
                   <Link
                     to={`/community/question/${question.id}`}
@@ -299,7 +361,7 @@ export default function Community() {
                 </p>
 
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {question.tags.map(tag => (
+                  {(question.tags || []).map(tag => (
                     <span
                       key={tag}
                       className="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded"
