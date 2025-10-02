@@ -22,7 +22,6 @@ export default function Community() {
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTag, setSelectedTag] = useState('All')
   const [showAskModal, setShowAskModal] = useState(false)
@@ -48,9 +47,6 @@ export default function Community() {
         if (newQuestion.is_published) {
           setQuestions(prev => [newQuestion, ...prev])
         }
-        if (newQuestion.is_published) {
-          setQuestions(prev => [newQuestion, ...prev])
-        }
       })
       .subscribe()
 
@@ -65,23 +61,13 @@ export default function Community() {
 
   const fetchQuestions = async () => {
     setError(null)
-    setError(null)
     try {
       const { data, error } = await supabase
         .from('questions')
         .select('id, title, body, tags, is_published, created_at, user_id')
-        .select('id, title, body, tags, is_published, created_at, user_id')
         .eq('is_published', true)
         .order('created_at', { ascending: false })
 
-      if (error) {
-        console.error('Supabase error:', error)
-        if (error.code === 'PGRST301') {
-          setError("We couldn't load questions. Please sign in.")
-        } else {
-          setError("Failed to load questions. Please try again.")
-        }
-        throw error
       if (error) {
         console.error('Supabase error:', error)
         if (error.code === 'PGRST301') {
@@ -124,10 +110,6 @@ export default function Community() {
     setSearchTerm('')
   }
 
-  const clearSearch = () => {
-    setSearchTerm('')
-  }
-
   const availableTags = ['All', 'Energy', 'Focus', 'Recovery', 'Sleep', 'Supplements', 'Diet', 'Exercise']
 
   const addTag = () => {
@@ -162,25 +144,12 @@ export default function Community() {
         }])
         .select('id, title, body, tags, is_published, created_at, user_id')
         .single()
-        }])
-        .select('id, title, body, tags, is_published, created_at, user_id')
-        .single()
 
       if (error) {
         console.error('Supabase error:', error)
         throw error
       }
 
-      // Optimistically add to local state
-      if (data) {
-        setQuestions(prev => [data, ...prev])
-        
-        // Scroll to top and briefly highlight
-      if (error) {
-        console.error('Supabase error:', error)
-        throw error
-      }
-      }
       // Optimistically add to local state
       if (data) {
         setQuestions(prev => [data, ...prev])
@@ -192,11 +161,6 @@ export default function Community() {
       showToast('Question posted successfully!', 'success')
       setShowAskModal(false)
       setNewQuestion({ title: '', body: '', tags: [] })
-      
-      // Also trigger a refetch to ensure consistency
-      setTimeout(() => {
-        fetchQuestions()
-      }, 1000)
       
       // Also trigger a refetch to ensure consistency
       setTimeout(() => {
@@ -246,17 +210,6 @@ export default function Community() {
     )
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-[#F5F7F8] py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8">
-            <p className="text-red-800">{error}</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
   return (
     <div className="min-h-screen bg-[#F5F7F8] py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -280,14 +233,6 @@ export default function Community() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-[#7ED957] focus:border-[#7ED957]"
               />
-              {searchTerm && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  ×
-                </button>
-              )}
               {searchTerm && (
                 <button
                   onClick={clearSearch}
@@ -332,11 +277,6 @@ export default function Community() {
           <div className="space-y-4">
             {filteredQuestions.map((question, index) => (
               <div 
-                key={question.id} 
-                className={`bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-all ${
-                  index === 0 && questions[0]?.id === question.id ? 'ring-2 ring-[#7ED957] ring-opacity-50' : ''
-                }`}
-              >
                 key={question.id} 
                 className={`bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-all ${
                   index === 0 && questions[0]?.id === question.id ? 'ring-2 ring-[#7ED957] ring-opacity-50' : ''
