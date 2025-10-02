@@ -5,6 +5,8 @@ import Navigation from './components/Navigation'
 import RequireAuth from './components/RequireAuth'
 
 // Pages
+import Landing from './pages/Landing'
+import Demo from './pages/Demo'
 import SignIn from './pages/auth/SignIn'
 import SignUp from './pages/auth/SignUp'
 import Planner from './pages/Planner'
@@ -21,68 +23,207 @@ export default function App() {
       <ToastProvider>
         <Router>
           <div className="min-h-screen bg-[#F5F7F8]">
-            <Navigation />
             
             <Routes>
+              {/* Landing page */}
+              <Route path="/" element={<Landing />} />
+              
+              {/* Demo experience */}
+              <Route path="/demo" element={<Demo />} />
+              
               {/* Public routes */}
               <Route path="/auth/sign-in" element={<SignIn />} />
               <Route path="/auth/sign-up" element={<SignUp />} />
               
               {/* Protected routes */}
               <Route path="/planner" element={
-                <RequireAuth>
-                  <Planner />
-                </RequireAuth>
+                <>
+                  <Navigation />
+                  <RequireAuth>
+                    <Planner />
+                  </RequireAuth>
+                </>
               } />
               
-              <Route path="/library" element={<Library />} />
-              <Route path="/library/:slug" element={<LibraryDetail />} />
+              <Route path="/library" element={
+                <>
+                  <Navigation />
+                  <Library />
+                </>
+              } />
+              <Route path="/library/:slug" element={
+                <>
+                  <Navigation />
+                  <LibraryDetail />
+                </>
+              } />
               
               <Route path="/habits" element={
-                <RequireAuth>
-                  <Habits />
-                </RequireAuth>
+                <>
+                  <Navigation />
+                  <RequireAuth>
+                    <Habits />
+                  </RequireAuth>
+                </>
               } />
               
               <Route path="/forecast" element={
-                <RequireAuth>
-                  <Forecast />
-                </RequireAuth>
+                <>
+                  <Navigation />
+                  <RequireAuth>
+                    <Forecast />
+                  </RequireAuth>
+                </>
               } />
               
               <Route path="/safety" element={
-                <RequireAuth>
-                  <Safety />
-                </RequireAuth>
+                <>
+                  <Navigation />
+                  <RequireAuth>
+                    <Safety />
+                  </RequireAuth>
+                </>
               } />
               
               <Route path="/community" element={
-                <RequireAuth>
-                  <Community />
-                </RequireAuth>
+                <>
+                  <Navigation />
+                  <RequireAuth>
+                    <Community />
+                  </RequireAuth>
+                </>
               } />
-              
-              {/* Default redirect */}
-              <Route path="/" element={<Navigate to="/planner" replace />} />
             </Routes>
 
             {/* Footer */}
-            <footer className="bg-white border-t border-gray-100 py-16">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="text-center">
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
-                    <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+            <Routes>
+              <Route path="/planner" element={
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-base text-gray-500 font-medium">
-                    Educational, not medical advice.
-                  </p>
-                  <p className="text-sm text-gray-400 mt-4">
-                    © 2024 YoungerU. All rights reserved.
-                  </p>
-                </div>
-              </div>
-            </footer>
+                </footer>
+              } />
+              <Route path="/library" element={
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
+                  </div>
+                </footer>
+              } />
+              <Route path="/library/:slug" element={
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
+                  </div>
+                </footer>
+              } />
+              <Route path="/habits" element={
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
+                  </div>
+                </footer>
+              } />
+              <Route path="/forecast" element={
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
+                  </div>
+                </footer>
+              } />
+              <Route path="/safety" element={
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
+                  </div>
+                </footer>
+              } />
+              <Route path="/community" element={
+                <footer className="bg-white border-t border-gray-100 py-16">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-bold text-[#174C4F] mb-2">YoungerU</h3>
+                        <p className="text-lg text-gray-600">Science-based wellness guidance</p>
+                      </div>
+                      <p className="text-base text-gray-500 font-medium">
+                        Educational, not medical advice.
+                      </p>
+                      <p className="text-sm text-gray-400 mt-4">
+                        © 2024 YoungerU. All rights reserved.
+                      </p>
+                    </div>
+                  </div>
+                </footer>
+              } />
+            </Routes>
           </div>
         </Router>
       </ToastProvider>
