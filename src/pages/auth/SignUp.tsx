@@ -22,7 +22,7 @@ export default function SignUp() {
       showToast(error.message, 'error')
     } else {
       showToast('Account created! Welcome to YoungerU!', 'success')
-      navigate('/app/planner')
+      navigate('/planner')
     }
 
     setLoading(false)

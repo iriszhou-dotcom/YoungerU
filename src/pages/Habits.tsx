@@ -20,12 +20,12 @@ interface HabitLog {
 }
 
 export default function Habits() {
-  const { user, loading: authLoading } = useAuth()
+  const { user } = useAuth()
   const { showToast } = useToast()
   const [habits, setHabits] = useState<Habit[]>([])
   const [habitLogs, setHabitLogs] = useState<HabitLog[]>([])
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [newHabit, setNewHabit] = useState({
     title: '',
     schedule: { type: 'daily' },
@@ -36,8 +36,6 @@ export default function Habits() {
     if (user) {
       fetchHabits()
       fetchHabitLogs()
-    } else {
-      setLoading(false)
     }
   }, [user])
 
@@ -77,12 +75,7 @@ export default function Habits() {
   }
 
   const createHabit = async () => {
-    if (!user) {
-      showToast('Please sign in to create habits', 'info')
-      return
-    }
-    
-    if (!newHabit.title.trim()) return
+    if (!user || !newHabit.title.trim()) return
 
     try {
       const { error } = await supabase
@@ -107,10 +100,7 @@ export default function Habits() {
   }
 
   const toggleHabitToday = async (habitId: number) => {
-    if (!user) {
-      showToast('Please sign in to track habits', 'info')
-      return
-    }
+    if (!user) return
 
     const today = new Date().toISOString().split('T')[0]
     const existingLog = habitLogs.find(log => 
@@ -207,12 +197,12 @@ export default function Habits() {
             className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] flex items-center gap-3 transition-all duration-200 hover-lift shadow-lg text-lg"
           >
             <Plus className="w-5 h-5" />
-            {user ? 'Create Habit' : 'Sign In to Create Habits'}
+            Create Habit
           </button>
         </div>
 
         {/* Habits List */}
-        {user && habits.length > 0 ? (
+        {habits.length > 0 ? (
           <div className="space-y-6">
             {habits.map(habit => (
               <div key={habit.id} className="bg-white rounded-3xl shadow-soft p-8 hover:shadow-lg transition-all duration-300 group">
@@ -250,24 +240,6 @@ export default function Habits() {
                 </div>
               </div>
             ))}
-          </div>
-        ) : !user ? (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 bg-[#174C4F]/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
-              <Plus className="w-12 h-12 text-[#174C4F]/60" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Sign in to track habits
-            </h3>
-            <p className="text-lg text-gray-500 mb-8">
-              Create an account to build and track healthy routines.
-            </p>
-            <Link
-              to="/auth/sign-up"
-              className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] transition-all duration-200 hover-lift shadow-lg text-lg"
-            >
-              Sign Up Free
-            </Link>
           </div>
         ) : (
           <div className="text-center py-20">

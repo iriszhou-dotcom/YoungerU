@@ -27,7 +27,7 @@ interface Recommendation {
 }
 
 export default function Planner() {
-  const { user, loading: authLoading } = useAuth()
+  const { user } = useAuth()
   const { showToast } = useToast()
   const [loading, setLoading] = useState(false)
   const [inputs, setInputs] = useState<PlannerInputs>({
@@ -62,10 +62,7 @@ export default function Planner() {
   }
 
   const generatePlan = async () => {
-    if (!user) {
-      showToast('Please sign in to save your plan', 'info')
-      // Still generate plan for demo purposes
-    }
+    if (!user) return
     
     setLoading(true)
     
@@ -111,23 +108,19 @@ export default function Planner() {
     setRecommendations(newRecommendations)
     
     // Save to database
-    if (user) {
-      try {
-        await supabase
-          .from('planner_sessions')
-          .insert({
-            user_id: user.id,
-            inputs,
-            output: newRecommendations
-          })
-        
-        showToast('Plan generated and saved successfully!', 'success')
-      } catch (error) {
-        console.error('Error saving plan:', error)
-        showToast('Plan generated, but failed to save', 'error')
-      }
-    } else {
-      showToast('Plan generated! Sign in to save your results.', 'success')
+    try {
+      await supabase
+        .from('planner_sessions')
+        .insert({
+          user_id: user.id,
+          inputs,
+          output: newRecommendations
+        })
+      
+      showToast('Plan generated successfully!', 'success')
+    } catch (error) {
+      console.error('Error saving plan:', error)
+      showToast('Plan generated, but failed to save', 'error')
     }
     
     setLoading(false)
@@ -161,25 +154,12 @@ export default function Planner() {
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <button
-                  onClick={() => {
-                    const element = document.getElementById('planner-form')
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth' })
-                    }
-                  }}
+                  onClick={() => document.getElementById('planner-form')?.scrollIntoView({ behavior: 'smooth' })}
                   className="bg-[#7ED957] text-white px-8 py-4 rounded-2xl font-semibold hover:bg-[#6BC847] transition-all duration-200 hover-lift shadow-xl text-lg"
                 >
                   Start Your Plan
                 </button>
-                <button 
-                  onClick={() => {
-                    const element = document.getElementById('how-it-works')
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth' })
-                    }
-                  }}
-                  className="border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white/10 transition-all duration-200 text-lg"
-                >
+                <button className="border-2 border-white/30 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white/10 transition-all duration-200 text-lg">
                   See How It Works
                 </button>
               </div>
@@ -206,7 +186,7 @@ export default function Planner() {
       </div>
 
       {/* How It Works Section */}
-      <div id="how-it-works" className="py-24 bg-white">
+      <div className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-[#174C4F] mb-4">
