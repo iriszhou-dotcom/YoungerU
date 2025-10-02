@@ -183,7 +183,16 @@ export default function Landing() {
               Science-backed recommendations tailored to your unique needs
             </p>
           </div>
-          
+
+          {/* Hero Image */}
+          <div className="mb-16 rounded-3xl overflow-hidden shadow-2xl max-w-5xl mx-auto">
+            <img
+              src="https://images.pexels.com/photos/3768894/pexels-photo-3768894.jpeg?auto=compress&cs=tinysrgb&w=1200"
+              alt="Happy person enjoying active lifestyle with wellness supplements"
+              className="w-full h-[400px] object-cover"
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
