@@ -1,18 +1,41 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Sparkles, CheckCircle, ArrowRight, User, Zap, Shield, TrendingUp, Heart, Brain } from 'lucide-react'
+import { Sparkles, CheckCircle, ArrowRight, User, Zap, Shield, TrendingUp, Heart, Brain, AlertCircle } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 
 export default function Landing() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the data to your backend
-    console.log('Customer info:', { name, email, password })
-    setSubmitted(true)
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          }
+        }
+      })
+
+      if (signUpError) throw signUpError
+
+      if (data.user) {
+        setSubmitted(true)
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during sign up')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -192,15 +215,33 @@ export default function Landing() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base bg-white text-black transition-all duration-200 hover:border-gray-300"
                     placeholder="Create a secure password"
+                    minLength={6}
                   />
                 </div>
 
+                {error && (
+                  <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-xl">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                    <p className="text-sm text-red-600">{error}</p>
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-[#7ED957] to-[#6BC847] text-white py-4 px-6 rounded-xl font-bold hover:shadow-2xl transition-all duration-200 hover-lift shadow-lg text-lg flex items-center justify-center gap-3 hover:scale-105"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-[#7ED957] to-[#6BC847] text-white py-4 px-6 rounded-xl font-bold hover:shadow-2xl transition-all duration-200 hover-lift shadow-lg text-lg flex items-center justify-center gap-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  <Sparkles className="w-5 h-5" />
-                  Get My Personalized Plan
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5" />
+                      Get My Personalized Plan
+                    </>
+                  )}
                 </button>
               </form>
 
