@@ -56,18 +56,6 @@ export default function Landing() {
               YoungerU
             </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <a
-              href="#signup"
-              onClick={(e) => {
-                e.preventDefault()
-                document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' })
-              }}
-              className="bg-white/10 backdrop-blur-sm text-white px-6 py-2.5 rounded-full font-medium hover:bg-white/20 transition-all duration-200 border border-white/20"
-            >
-              Get Started
-            </a>
-          </div>
         </div>
       </nav>
 
