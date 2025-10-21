@@ -1,17 +1,41 @@
 import { useState } from 'react'
 import { Sparkles, CheckCircle, ArrowRight, User, Zap, Shield, TrendingUp, Heart, Brain } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 
 export default function Landing() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically send the data to your backend
-    console.log('Customer info:', { name, email, password })
-    setSubmitted(true)
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
+      })
+
+      if (signUpError) throw signUpError
+
+      if (data.user) {
+        setSubmitted(true)
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during sign up')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -127,6 +151,12 @@ export default function Landing() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5 relative">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                    {error}
+                  </div>
+                )}
+
                 <div>
                   <label htmlFor="name" className="block text-sm font-bold text-[#174C4F] mb-2">
                     Full Name
@@ -137,7 +167,8 @@ export default function Landing() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base bg-white text-black transition-all duration-200 hover:border-gray-300"
+                    disabled={loading}
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base bg-white text-black transition-all duration-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -152,7 +183,8 @@ export default function Landing() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base bg-white text-black transition-all duration-200 hover:border-gray-300"
+                    disabled={loading}
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base bg-white text-black transition-all duration-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -167,17 +199,20 @@ export default function Landing() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base bg-white text-black transition-all duration-200 hover:border-gray-300"
-                    placeholder="Create a secure password"
+                    disabled={loading}
+                    minLength={6}
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7ED957] focus:border-[#7ED957] text-base bg-white text-black transition-all duration-200 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="Create a secure password (min 6 characters)"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-[#7ED957] to-[#6BC847] text-white py-4 px-6 rounded-xl font-bold hover:shadow-2xl transition-all duration-200 hover-lift shadow-lg text-lg flex items-center justify-center gap-3 hover:scale-105"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-[#7ED957] to-[#6BC847] text-white py-4 px-6 rounded-xl font-bold hover:shadow-2xl transition-all duration-200 hover-lift shadow-lg text-lg flex items-center justify-center gap-3 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   <Sparkles className="w-5 h-5" />
-                  Get My Personalized Plan
+                  {loading ? 'Creating Account...' : 'Get My Personalized Plan'}
                 </button>
               </form>
 
