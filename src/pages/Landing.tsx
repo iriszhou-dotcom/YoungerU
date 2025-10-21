@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Sparkles, CheckCircle, ArrowRight, User, Zap, Shield, TrendingUp, Heart, Brain, Star, Clock, Award } from 'lucide-react'
+import { Sparkles, CheckCircle, ArrowRight, User, Zap, Shield, TrendingUp, Heart, Brain, Star, Clock, Award, Activity, Target, Users } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 export default function Landing() {
@@ -58,11 +58,11 @@ export default function Landing() {
               Welcome, {name}!
             </h2>
             <p className="text-xl text-gray-700 mb-6 font-medium">
-              Your wellness journey starts now
+              Your personalized health journey begins today
             </p>
             <div className="bg-[#7ED957]/10 border-2 border-[#7ED957]/30 rounded-2xl p-6 mb-8">
-              <p className="text-gray-700 leading-relaxed">
-                Your account has been created successfully. Check your email to verify your account and unlock your personalized wellness plan.
+              <p className="text-gray-700 leading-relaxed text-lg">
+                Your account has been created successfully. Check your email to verify your account and access your personalized supplement recommendations.
               </p>
             </div>
             <button
@@ -109,29 +109,29 @@ export default function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Content */}
             <div className="relative z-10 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#7ED957]/20 to-[#6BC847]/20 backdrop-blur-md rounded-full text-sm font-bold border-2 border-[#7ED957]/40 mb-8 shadow-lg shadow-[#7ED957]/10">
-                <Star className="w-4 h-4 text-[#7ED957] fill-[#7ED957]" />
-                <span className="bg-gradient-to-r from-white to-[#7ED957] bg-clip-text text-transparent">Trusted by 10,000+ users</span>
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#7ED957]/20 to-[#6BC847]/20 backdrop-blur-md rounded-full text-base font-bold border-2 border-[#7ED957]/40 mb-8 shadow-lg shadow-[#7ED957]/10">
+                <Star className="w-5 h-5 text-[#7ED957] fill-[#7ED957]" />
+                <span className="bg-gradient-to-r from-white to-[#7ED957] bg-clip-text text-transparent">Trusted by 10,000+ Adults Over 40</span>
               </div>
 
-              <h1 className="text-6xl lg:text-8xl font-black mb-8 leading-[0.95] tracking-tight">
-                <span className="block bg-gradient-to-r from-white via-white to-[#7ED957] bg-clip-text text-transparent">Feel younger,</span>
-                <span className="block bg-gradient-to-r from-[#7ED957] to-[#6BC847] bg-clip-text text-transparent">live stronger.</span>
+              <h1 className="text-5xl lg:text-7xl font-black mb-8 leading-[1.1] tracking-tight">
+                <span className="block bg-gradient-to-r from-white via-white to-[#7ED957] bg-clip-text text-transparent">Age With Vitality,</span>
+                <span className="block bg-gradient-to-r from-[#7ED957] to-[#6BC847] bg-clip-text text-transparent">Live Confidently.</span>
               </h1>
 
-              <p className="text-2xl lg:text-3xl text-white/90 mb-10 leading-relaxed font-medium">
+              <p className="text-xl lg:text-2xl text-white/90 mb-10 leading-relaxed font-medium">
                 Get <span className="relative inline-block">
-                  <span className="relative z-10 text-[#7ED957] font-bold">personalized</span>
+                  <span className="relative z-10 text-[#7ED957] font-bold">expert-backed</span>
                   <span className="absolute bottom-1 left-0 w-full h-3 bg-[#7ED957]/20 -rotate-1"></span>
-                </span>, science-backed supplement guidance in just 3 minutes.
+                </span> supplement recommendations tailored for your life stage. Simple, effective, and designed for adults 40+.
               </p>
 
               {/* Enhanced Benefit Pills */}
               <div className="flex flex-wrap gap-4 mb-12">
                 {[
-                  { icon: <Zap className="w-5 h-5" />, label: 'Boost Energy', gradient: 'from-yellow-400 to-orange-500' },
-                  { icon: <Brain className="w-5 h-5" />, label: 'Sharpen Focus', gradient: 'from-blue-400 to-cyan-500' },
-                  { icon: <Heart className="w-5 h-5" />, label: 'Speed Recovery', gradient: 'from-pink-400 to-rose-500' }
+                  { icon: <Activity className="w-5 h-5" />, label: 'Sustained Energy', gradient: 'from-yellow-400 to-orange-500' },
+                  { icon: <Brain className="w-5 h-5" />, label: 'Mental Clarity', gradient: 'from-blue-400 to-cyan-500' },
+                  { icon: <Heart className="w-5 h-5" />, label: 'Heart Health', gradient: 'from-pink-400 to-rose-500' }
                 ].map(benefit => (
                   <div key={benefit.label} className="group relative">
                     <div className={`absolute inset-0 bg-gradient-to-r ${benefit.gradient} rounded-2xl blur-lg opacity-40 group-hover:opacity-60 transition-opacity duration-300`}></div>
@@ -146,9 +146,9 @@ export default function Landing() {
               {/* Enhanced Stats Row */}
               <div className="grid grid-cols-3 gap-6 mb-8">
                 {[
-                  { value: '98%', label: 'Satisfaction', icon: <Award className="w-6 h-6" /> },
-                  { value: '10k+', label: 'Active Users', icon: <TrendingUp className="w-6 h-6" /> },
-                  { value: '3min', label: 'Quick Start', icon: <Clock className="w-6 h-6" /> }
+                  { value: '40+', label: 'Age Focus', icon: <Target className="w-6 h-6" /> },
+                  { value: '10k+', label: 'Members', icon: <Users className="w-6 h-6" /> },
+                  { value: '5min', label: 'Assessment', icon: <Clock className="w-6 h-6" /> }
                 ].map((stat, i) => (
                   <div key={i} className="relative group">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#7ED957]/20 to-[#6BC847]/20 rounded-2xl blur-xl opacity-50 group-hover:opacity-70 transition-opacity"></div>
@@ -173,11 +173,11 @@ export default function Landing() {
                 </div>
 
                 <div className="text-center mb-10 relative pt-6">
-                  <h2 className="text-4xl font-black text-[#174C4F] mb-3 bg-gradient-to-r from-[#174C4F] to-[#1A5A5E] bg-clip-text text-transparent">
-                    Start Your Journey
+                  <h2 className="text-3xl font-black text-[#174C4F] mb-3 bg-gradient-to-r from-[#174C4F] to-[#1A5A5E] bg-clip-text text-transparent">
+                    Get Your Personalized Plan
                   </h2>
-                  <p className="text-gray-700 text-xl font-semibold">
-                    Get your personalized wellness plan
+                  <p className="text-gray-700 text-lg font-semibold">
+                    Science-backed recommendations for adults 40+
                   </p>
                   <div className="flex items-center justify-center gap-2 mt-4">
                     <div className="flex -space-x-2">
@@ -185,7 +185,7 @@ export default function Landing() {
                         <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7ED957] to-[#6BC847] border-2 border-white"></div>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-600 font-medium ml-2">Join 10,000+ users</span>
+                    <span className="text-sm text-gray-600 font-medium ml-2">Join 10,000+ members 40+</span>
                   </div>
                 </div>
 
@@ -259,7 +259,7 @@ export default function Landing() {
                   <div className="absolute -inset-1 bg-gradient-to-r from-[#7ED957] via-[#6BC847] to-[#7ED957] rounded-2xl blur-lg opacity-70 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative bg-gradient-to-r from-[#7ED957] to-[#6BC847] text-white py-5 px-8 rounded-2xl font-black hover:shadow-2xl transition-all duration-300 shadow-xl text-xl flex items-center justify-center gap-4 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 border-2 border-white/20">
                     <Sparkles className="w-6 h-6" />
-                    {loading ? 'Creating Account...' : 'Get My Personalized Plan'}
+                    {loading ? 'Creating Your Account...' : 'Get My Free Assessment'}
                     <ArrowRight className="w-6 h-6 group-hover/btn:translate-x-1 transition-transform" />
                   </div>
                 </button>
@@ -281,36 +281,36 @@ export default function Landing() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7ED957]/20 to-[#6BC847]/20 backdrop-blur-md rounded-full text-sm font-black uppercase tracking-wider border-2 border-[#7ED957]/40 mb-8 shadow-lg shadow-[#7ED957]/10">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7ED957]/20 to-[#6BC847]/20 backdrop-blur-md rounded-full text-base font-black uppercase tracking-wider border-2 border-[#7ED957]/40 mb-8 shadow-lg shadow-[#7ED957]/10">
               <TrendingUp className="w-5 h-5 text-[#7ED957]" />
-              <span className="bg-gradient-to-r from-white to-[#7ED957] bg-clip-text text-transparent">Proven Results</span>
+              <span className="bg-gradient-to-r from-white to-[#7ED957] bg-clip-text text-transparent">Designed for 40+</span>
             </div>
-            <h2 className="text-5xl lg:text-7xl font-black text-white mb-8 bg-gradient-to-r from-white via-white to-[#7ED957] bg-clip-text text-transparent">
-              Why Choose YoungerU?
+            <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 bg-gradient-to-r from-white via-white to-[#7ED957] bg-clip-text text-transparent">
+              Why YoungerU Works for You
             </h2>
-            <p className="text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed font-medium">
-              Science-backed recommendations tailored to your unique needs
+            <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed font-medium">
+              Expert guidance specifically designed for your stage of life, backed by science and trusted by thousands
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
               {
-                icon: <User className="w-10 h-10" />,
-                title: "Personalized for You",
-                description: "Every recommendation is tailored to your lifestyle, goals, and health profile",
+                icon: <Target className="w-10 h-10" />,
+                title: "Age-Specific Guidance",
+                description: "Recommendations tailored for adults 40+ addressing metabolism, joint health, cognitive function, and energy levels",
                 color: "from-blue-500 to-cyan-500"
               },
               {
-                icon: <Zap className="w-10 h-10" />,
-                title: "Science-Backed",
-                description: "All recommendations are based on peer-reviewed research and clinical evidence",
+                icon: <Shield className="w-10 h-10" />,
+                title: "Safe & Effective",
+                description: "Evidence-based supplements with clear dosing guidelines and safety checks for common medications",
                 color: "from-[#7ED957] to-[#6BC847]"
               },
               {
-                icon: <Shield className="w-10 h-10" />,
-                title: "Safety First",
-                description: "Built-in safety checks for interactions and contraindications",
+                icon: <Users className="w-10 h-10" />,
+                title: "Trusted by Thousands",
+                description: "Join a community of adults 40+ who are taking control of their health and vitality",
                 color: "from-pink-500 to-rose-500"
               }
             ].map((feature, index) => (
@@ -347,11 +347,11 @@ export default function Landing() {
               <div className="w-24 h-24 bg-gradient-to-br from-[#7ED957] to-[#6BC847] rounded-full flex items-center justify-center mx-auto mb-10 shadow-2xl shadow-[#7ED957]/30 animate-bounce-slow">
                 <Sparkles className="w-12 h-12 text-white" />
               </div>
-              <h2 className="text-6xl lg:text-7xl font-black text-white mb-8 bg-gradient-to-r from-white via-white to-[#7ED957] bg-clip-text text-transparent">
-                Ready to Feel Your Best?
+              <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 bg-gradient-to-r from-white via-white to-[#7ED957] bg-clip-text text-transparent">
+                Ready to Optimize Your Health?
               </h2>
-              <p className="text-2xl text-white/90 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
-                Join thousands who've already started their wellness transformation
+              <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
+                Join thousands of adults 40+ who are taking science-backed steps toward better health, more energy, and lasting vitality
               </p>
               <a
                 href="#signup"
@@ -363,7 +363,7 @@ export default function Landing() {
               >
                 <div className="absolute -inset-2 bg-gradient-to-r from-[#7ED957] via-[#6BC847] to-[#7ED957] rounded-full blur-2xl opacity-70 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative bg-gradient-to-r from-[#7ED957] to-[#6BC847] text-white px-12 py-6 rounded-full font-black hover:shadow-2xl transition-all duration-300 shadow-xl text-2xl flex items-center gap-4 hover:scale-110 border-4 border-white/20">
-                  Start Your Plan
+                  Get Your Free Assessment
                   <ArrowRight className="w-7 h-7 group-hover/btn:translate-x-2 transition-transform" />
                 </div>
               </a>
