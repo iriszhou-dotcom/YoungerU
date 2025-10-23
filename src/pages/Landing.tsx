@@ -333,6 +333,59 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* Video Section */}
+      <div className="py-32 bg-gradient-to-b from-[#0A1F21] via-[#0D2628] to-[#0A1F21] text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#7ED95708_1px,transparent_1px),linear-gradient(to_bottom,#7ED95708_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7ED957] rounded-full mix-blend-screen filter blur-[150px] opacity-10"></div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#7ED957]/20 to-[#6BC847]/20 backdrop-blur-md rounded-full text-base font-black uppercase tracking-wider border-2 border-[#7ED957]/40 mb-8 shadow-lg shadow-[#7ED957]/10">
+              <Sparkles className="w-5 h-5 text-[#7ED957]" />
+              <span className="bg-gradient-to-r from-white to-[#7ED957] bg-clip-text text-transparent">Watch This</span>
+            </div>
+            <h2 className="text-4xl lg:text-6xl font-black text-white mb-8 bg-gradient-to-r from-white via-white to-[#7ED957] bg-clip-text text-transparent">
+              See How YoungerU Works
+            </h2>
+            <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed font-medium mb-12">
+              Discover how our personalized supplement recommendations can help you achieve your health goals
+            </p>
+          </div>
+
+          <div className="relative group max-w-4xl mx-auto">
+            <div className="absolute -inset-2 bg-gradient-to-r from-[#7ED957] via-[#6BC847] to-[#7ED957] rounded-3xl blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
+            <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl">
+              <div className="aspect-video">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/tZnN_Jdl9Ww"
+                  title="YoungerU Overview"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-16">
+            <a
+              href="#signup"
+              onClick={(e) => {
+                e.preventDefault()
+                document.querySelector('form')?.scrollIntoView({ behavior: 'smooth' })
+              }}
+              className="inline-flex relative group/btn"
+            >
+              <div className="absolute -inset-2 bg-gradient-to-r from-[#7ED957] via-[#6BC847] to-[#7ED957] rounded-full blur-xl opacity-70 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative bg-gradient-to-r from-[#7ED957] to-[#6BC847] text-white px-10 py-5 rounded-full font-black hover:shadow-2xl transition-all duration-300 shadow-xl text-xl flex items-center gap-4 hover:scale-110 border-4 border-white/20">
+                Get Started Today
+                <ArrowRight className="w-6 h-6 group-hover/btn:translate-x-2 transition-transform" />
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
       {/* CTA Section */}
       <div className="py-32 bg-gradient-to-br from-[#0A1F21] via-[#0D2628] to-[#0A1F21] relative overflow-hidden">
         <div className="absolute inset-0">
